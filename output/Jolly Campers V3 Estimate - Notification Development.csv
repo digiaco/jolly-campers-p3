@@ -1,0 +1,131 @@
+Category,Feature,Task,Hour,Description,,,Cron Job,Cron Trigger Hour
+InApp Notification System,,,,,,,,
+,Notification,Bell notification,2,Show unread indicator (dot or count),,,,
+,,Notification List API,6,"- API to return the last N notifications
+- Support unread count",,,,
+,,Notification Table & Modal UI,10,"- UI to display dropdown/modal of recent notifications
+- Clicking shows full content or opens related page",,,,
+,,Notification Routing & Links,4,"- Each notification can link to a booking, chat, etc.
+- Route to corresponding page when clicked",,,,
+,,Mark as Read,2,"- API to mark notification as read
+- Update unread bubble",,,,
+,,Unread Bubble Logic,2,- Show unread dot/badge until opened or marked as read,,,,
+,,Template system,2,Can use handlebar or mustache,,,,
+,Websocket integration - Live Notification Update,,,,,,,
+,,WebSocket Setup (Backend),4,"- Setup socket server (e.g., socket.io) and user session handling",,,,
+,,Redis Pub/Sub Integration,4,- Use Redis for centralized pub/sub between server instances,,,,
+,,Event Emitters for Notifications,4,"- Emit events for new messages, bookings, cancellations, etc.",,,,
+,,WebSocket Frontend Listener,3,- Listen to WebSocket on client- Update UI in real-time,,,,
+,,"Reconnect, Heartbeat, Cleanup",3,"- Handle edge cases, socket cleanup, reconnect logic",,,,
+,,Store notifications in DB,2,Persist notifications for history / reload,,,,
+,,Mark as read API,2,API to mark notifications as read,,,,
+,,WebSocket connection (client),2,Connect to backend WebSocket server,,,,
+,,WebSocket message handling,2,Push incoming notifications to local state,,,,
+,,,,,,,,
+Email Service,,,,,,,,
+,Email Service,Basic Email Template,4,"- Develop reusable HTML email template (header, footer, shared styles)
+- Store in a third-party email platform (e.g., SendGrid or Mailchimp) to support future Zapier phase-out",,New,,
+,,,,,,,,
+,,,,,,,,
+,,Offline Message Notification Template,5,"- Email notification to fleet admin or user when a message is received and the recipient is offline
+- Include both English and Dutch versions
+- Trigger & Data 3hr, template 2hr",Email,New,,
+,,,,,,,,
+,,,,,,,,
+,Cron Service,Booking Reminder,6,"-  Upcoming trip: Triggers a reminder email N days before the booking start date
+- Camper return today: Triggers one day before the the return
+- The value of N is stored in a config file
+- Applies system-wide (not configurable per fleet admin)",,,,
+,,Abandoned Booking Reminder,6,"- Periodically checks for abandoned bookings
+- Sends a reminder email to the user encouraging them to complete the booking",,,,
+,,,,,,,,
+,,,,,,,,
+,,,,,,,,
+,,,,,,,,
+,,,,,,,,
+,,,,,,,,
+,,,,,,,,
+,,,,,,,,
+,,,,,,,,
+Super Admin Notification,,,,"Trigger notificaiton, repare data : 2hr
+Email template: 2hr
+In-app template: 1hr",,,,
+,New Booking,Any booking confirmed,5,“🎉 New booking confirmed for [Camper Name] (€[Amount])”,"In-app, Email",Many messages,,
+,Cancellation,Booking cancelled,5,“⚠️ [Traveller Name] cancelled a booking for [Camper Name]”,"In-app, Email",,,
+,Dispute Opened,Fleet owner or traveller files dispute,5,“🚨 Dispute opened on booking #[ID] — review details”,"In-app, Email",,,
+,Late Return,Vehicle not checked in on time,3,“🕒 [Camper Name] return overdue — contact owner”,"In-app, Push",,,
+,Deposit Held,Deposit flagged or held,3,“💰 Deposit for booking #[ID] held for review”,In-app,,,
+,New Fleet Owner,New account created,3,“👋 [Owner Name] has registered a new fleet account”,In-app,,,
+,Inactive Fleet Owner,No new bookings in 30+ days,5,“📉 [Owner Name] has had no bookings in 30 days — check listing performance”,"In-app, Email",,,
+,Revenue Milestone,Platform crosses revenue threshold,3,“💶 Congratulations! Platform reached €100K GBV this quarter”,In-app,,,
+,System Alert,"Error in payout, data sync, or API",3,“⚙️ Error in payout sync for [Owner Name] — review in dashboard”,In-app,,,
+,Message Response Delay,Owner/Traveller response >24h,3,“⏳ [Owner Name] has delayed responses — average reply time 27h”,In-app,,,
+,Owner Feedback Alert,Negative review (<3★),3,“❗ [Traveller Name] left a 2★ review for [Camper Name]”,In-app,,,
+,New Destination Added,CMS update,3,“🌍 New travel destination page published: [Country Name]”,In-app,,,
+,,Fleet Sign Up Pending Email Template,4,"- Email both fleet admin and system admin
+- Includes English and Dutch versions",,,,
+,,Fleed Sign Up Approval Email Template,4,"- Email both fleet admin and system admin
+- Includes English and Dutch versions",,,,
+,,,,,,,,
+Fleet Owner Notification,,,,Repeat super admin: 2hr,,,,
+,New Booking,Camper booked,2,“🎉 New booking confirmed for [Camper Name] ([Start Date] – [End Date])”,"In-app, Email",,Repeat,
+,Booking Update,booking updated,5,,"In-app, Email",New,trigger 2,
+,Cancellation,Booking cancelled,2,,"In-app, Email",New,repeat,
+,Upcoming Pickup,24h before check-in,3,“🚗 [Traveller Name] picking up [Camper Name] tomorrow”,"In-app, Push",,cron trigger,
+,Check-In Started,Traveller begins Goform,3,“📝 [Traveller Name] started check-in for [Camper Name]”,In-app,"Check in started? Just a notification or it would lead to a check in form?
+- check in is done in the office, together with the staff, not online",,
+,Return Due Soon,24h before return,3,“🕒 [Camper Name] due for return tomorrow — prepare inspection form”,"In-app, Push",,cron trigger,
+,Late Return,Return not completed after due time,4,“⚠️ [Traveller Name] has not returned [Camper Name] yet”,"Push, Email",,cron trigger,
+,Deposit Released,After successful return,3,“💰 Deposit for [Traveller Name] released successfully”,In-app,what is the process to release deposit?,,
+,Deposit Held,Pending issue,3,“⚠️ Deposit for booking #[ID] held due to reported damage”,In-app,"we will have to implement the workflow
+- deposit is released automatically after N days , unless the fleet admin press a button to report issue
+- fleet admin report damage
+- deposit is held and the email goes out
+- need to have a list of pending issues to resolve? yes, displays a list of bookings with special status filter",,
+,New Message,Traveller sends message,3,“💬 New message from [Traveller Name]”,"In-app, Push",,,
+,Unreplied Message Reminder,>2h without response,3,“⏳ You have an unanswered message from [Traveller Name]”,In-app,,cron trigger,
+,Low Response Rate Alert,<80% replies in 24h,3,“📭 Your response rate has dropped — faster replies help boost your ranking!”,"In-app, Email",,cron trigger,
+,Maintenance Reminder,Based on mileage/dates,3,“🔧 [Camper Name] service due in 7 days”,In-app,,cron trigger,
+,Insurance Expiry Warning,14 days before expiry,4,“🛡️ Insurance for [Camper Name] expires soon”,Email,,cron trigger,
+,Payout Completed,Payout to owner processed,5,“💸 Your payout of €[Amount] has been processed”,"In-app, Email",,,
+,New Review Received,Traveller leaves review,3,“⭐ [Traveller Name] left a 5★ review on [Camper Name]”,In-app,,,
+,Negative Review Alert,<3★,5,“⚠️ Low rating received for [Camper Name] — check feedback”,"In-app, Email",,,
+,Performance Summary,Weekly digest,4,"“📊 This week: [X] bookings, [Y]% occupancy, [Z]€ revenue”",Email,,cron trigger,
+,,Fleet Sign Up Pending Email Template,2,"- Email both fleet admin and system admin
+- Includes English and Dutch versions",,,,
+,,Fleed Sign Up Approval Email Template,2,"- Email both fleet admin and system admin
+- Includes English and Dutch versions",,,,
+,,,,,,,,
+,,,,,,,,
+,,,,,,,,
+,,,,,,,,
+Traveler Notification,,,,Repeat: 2hr,,,,
+,Booking Confirmation,Booking successful,2,“🎉 Your booking is confirmed! [Camper Name] is ready for your trip.”,"In-app, Email",,,
+,Booking Updated,Booking Updated,2,,"In-app, Email",New,,
+,Cancellation,Booking cancelled,2,,"In-app, Email",New,,
+,Deposit Reminder,24h before pickup,5,“💰 Don’t forget your deposit due at pickup”,"In-app, Email",,cron trigger,
+,Pickup Reminder,24h before,4,“🚐 Ready to roll? Your camper pickup is tomorrow at [Time/Location].”,"Push, Email",,cron trigger,
+,Check-In Started,Owner begins process,3,“📝 Please complete your check-in with [Owner Name]”,In-app,,cron trigger,
+,Trip Ongoing,Mid-trip check,0,"“✨ Enjoying your trip? Remember, we’re here for support if needed.”",Push,,cron trigger,
+,Return Reminder,24h before due,3,“⏰ Time to head back — your return for [Camper Name] is tomorrow.”,"In-app, Push",,cron trigger,
+,Late Return Alert,If overdue,0,“⚠️ You’re late returning [Camper Name]. Contact [Owner Name] immediately.”,Push,,cron trigger,
+,Deposit Released,After return approved,5,“💰 Your deposit has been refunded — thanks for travelling with us!”,"In-app, Email",,,
+,New Message,Owner replies,3,“💬 [Owner Name] replied to your message”,"In-app, Push",,,
+,Unreplied Message Reminder,No reply in 2h,3,“⏳ Did you see [Owner Name]’s message?”,In-app,,cron trigger,
+,Trip Review Request,24h after return,5,“⭐ How was your trip with [Camper Name]? Leave a quick review.”,"Email, In-app",,cron trigger,
+,Special Offers / Promotions,Seasonal or geo-targeted,0,“🍂 10% off autumn camper adventures — book your next trip today!”,"In-app, Email","Better to use marketing email software like mailchimp, should be separate from the app. may need to sync users from the app to mailchimp
+for fleet owners, sync user contact on booking, mailchimp integration",,
+,Travel Inspiration,Automated monthly,0,“🚐 Discover 5 new routes to explore in Portugal this season.”,Email,Same,,
+,Abandoned Email Reminder,Abandoned Booking Reminder Template,3,"- Reminder email for abandoned bookings sent X hours after abandonment
+- Includes English and Dutch versions
+- One template per fleet admin; the X-hour delay is fixed system-wide and not configurable by fleet admins","Email, In-app",New,cron trigger,
+,,,,,,,,
+,,Finalize Payment Email Template,4,"- Email sent when final payment is processed
+- Includes English and Dutch versions",Email,New,,
+,,End trip Email Template,2,"- Email both fleet admin and system admin
+- Includes English and Dutch versions",,,yes,
+,,,,,,,,
+,,,,,,,,
+,,,,,,,,
+,,,,,,,,
+,,,238,,,,,

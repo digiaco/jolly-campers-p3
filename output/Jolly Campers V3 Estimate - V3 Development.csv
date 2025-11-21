@@ -1,0 +1,926 @@
+ron,Feature,Task,Hour,Description,Comment,Note,Discussion,Updated,,,,,
+DevOps,,,,,,,,,,,,,
+,Servers,Server Configuration,8,Configure development and production environments. Store and retrieve keys and secrets using a secret manager.,Checked,,,,,,,,
+,,Dockerize Containers,4,Dockerize all relevant services and applications for consistent local and production environments.,Checked,,,,,,,,
+,,CI/CD,4,"Set up CI/CD pipeline for automated testing, builds, and deployment to staging/production.",Checked,,,,,,,,
+,,,,,,,,,,,,,
+System,,,,,,,,,,,,,
+,Image Service,,,,,,,,,,,,
+,,Create,8,"- Upload to cloud storage
+- Front-end cropper and file type validation
+- Secure write access
+- Assumes backend does not generate multiple resolutions",Checked,,,,,,,,
+,,Read,6,"- Serve images through CDN with caching
+- Secure read access",Checked,,,,,,,,
+,,,,,,,,,,,,,
+,Email Service,,,"Without trip begin, or trip end email notifications.",,,,,,,,,
+,,Basic Email Template,4,"- Develop reusable HTML email template (header, footer, shared styles)
+- Store in a third-party email platform (e.g., SendGrid or Mailchimp) to support future Zapier phase-out",Checked,,,,,,,,
+,,Offline Message Notification Template,2,"- Email notification to fleet admin or user when a message is received and the recipient is offline
+- Include both English and Dutch versions",Checked,,,,,,,,
+,,Booking Confirmation Template,2,"- Triggered on booking confirmation
+- Includes English and Dutch versions",Checked,,,,,,,,
+,,Booking Update Template,2,"- Triggered when a booking is updated
+- Includes English and Dutch versions",Checked,,,,,,,,
+,,Booking Cancellation Template,2,"- Triggered when a booking is cancelled
+- Includes English and Dutch versions",Checked,,,,,,,,
+,,Abandoned Booking Reminder Template,2,"- Reminder email for abandoned bookings sent X hours after abandonment
+- Includes English and Dutch versions
+- One template per fleet admin; the X-hour delay is fixed system-wide and not configurable by fleet admins",Checked,,,,,,,,
+,,Booking Start Reminder Email Template,2,"- Reminder sent N hours before the start of the booking
+- Includes English and Dutch versions",Checked,,,,,,,,
+,,Booking Return Reminder Email Template,2,"- Reminder sent N hours before the end of the booking
+- Includes English and Dutch versions",Checked,,,10/12/2025,,,,,
+,,Finalize Payment Email Template,2,"- Email sent when final payment is processed
+- Includes English and Dutch versions",Checked,,,,,,,,
+,,End trip Email Template,2,"- Email both fleet admin and system admin
+- Includes English and Dutch versions",Checked,,,9/16/2025,,,,,
+,,Payment to fleed admin Email Template,2,"- Email both fleet admin and system admin
+- Includes English and Dutch versions",Checked,already included in notification,,9/16/2025,,,,,
+,,Fleet Sign Up Pending Email Template,2,"- Email both fleet admin and system admin
+- Includes English and Dutch versions",Checked,,,8/26/2025,,,,,
+,,Fleed Sign Up Approval Email Template,2,"- Email both fleet admin and system admin
+- Includes English and Dutch versions",Checked,,,8/26/2025,,,,,
+,,Customer to Fleet Review Email Template,2,"- Email both fleet admin and system admin
+- Includes English and Dutch versions",Checked,,,9/2/2025,,,,,
+,,,,,,,,,,,,,
+,Cron Service,Booking Reminder,6,"-  Upcoming trip: Triggers a reminder email N days before the booking start date
+- Camper return today: Triggers one day before the the return
+- The value of N is stored in a config file
+- Applies system-wide (not configurable per fleet admin)",Checked,,,10/12/2025,,,,,
+,,Abandoned Booking Reminder,6,"- Periodically checks for abandoned bookings
+- Sends a reminder email to the user encouraging them to complete the booking",Checked,,,,,,,,
+,,Partial Payment Auto-Charge,8,"- Automatically charges the remaining balance when the booking is less than 30 days away
+- Assumes integration with the payment system",Checked,,,,,,,,
+,,Automate Payment for Fleet Admin,8,"- Automatically calculates and transfers earnings to each fleet admin based on completed bookings
+- Runs on a fixed schedule (e.g., daily or weekly)
+- Assumes integration with Stripe Connect or equivalent for payout
+- Includes fee calculation (e.g., subtracting platform commission)
+- Logs and stores payout records for reporting and audit purposes",Checked,,,,,,,,
+,,,,,,,,,,,,,
+,,,,,,,,,,,,,
+,,,,,,,,,,,,,
+,Language service,Language Service,8,"- Backend key-value mapping system
+- Used for both system language translation (e.g., feature labels) and fleet-customized content
+- Used for content, such as vehicle title, description
+- it's not used for database ENUM type
+- It's not used for UI language",Checked,"We need to check how many languages ​​we want to have.
+If we need to use 3 or more languages, we should consider some translation libraries,
+and also maybe automate the translations from English.
+Workflow Idea
+- Keep English as the source language in JSON files.
+- Add a script (Node.js CLI) that:
+- Reads en.json.
+- For missing keys in fr.json, es.json, etc., calls Google/DeepL/OpenAI API.
+- Saves back updated translation files.
+- In dev, fallback to English if a translation is missing.","Need to reconsider, if this is really needed.",08/28/2025,,,,,
+,,Available Languages,1,"- List of supported languages
+- Internal database access only (not exposed in admin UI)",Checked,,,08/28/2025,,,,,
+,,UI Language ,0,Use library like React-i18next. The hour is broken down into each feature.,Checked,,,08/28/2025,,,,,
+,,,,,,,,,,,,,
+,Payment,,,,,,,,,,,,
+,,Stripe Credit Card Integration,8,Setup and test payment flow with Stripe Elements,,"We probably need to implement partial payment
+that will also take some time",,,,,,,
+,,iDEAL Payment Integration,5,Enable and test iDEAL as an alternative method,,"Stripe as a single integration
+Stripe is your main payment processor.
+You create a PaymentIntent (or Checkout Session), and you tell Stripe which payment methods you want to accept (e.g., ""card"", ""ideal"").
+Stripe handles the routing to either card processing or iDEAL, depending on what the customer selects.",,,,,,,
+,,Booking Flow Update,6,Connect booking confirmation to trigger Stripe payment,,,,,,,,,
+,,Stripe Connect Setup,16,Enable multi-fleet payout via Stripe Connect,,,,,,,,,
+,,Fleet Admin Onboarding,,"- KYC support, assuming we're using the FE component from Stripe to handle",,,,,,,,,
+,,Fleet Admin Management,12,UI and backend for managing connected accounts,,,,,,,,,
+,,Error Handling & Logging,6,Implement transaction logging and error management,,,,,,,,,
+,,,,,,,,,,,,,
+,,Booking Payment Deposit,8,- Apply a percentage-based deposit if the reservation is made more than 30 days before pickup,,,,,,,,,
+,,Balance Due (30 Days),0,Balance is automatically charged 30 days before pickup (handled in cron auto-charge),,,,,,,,,
+,,Refund Handling,8,"- Supports partial or full refunds based on cancellation timing:  
+• 0–30 days before pickup → No refund  
+• 30–60 days before pickup → 50% refund  
+• 60+ days before pickup → Full refund
+",,,,,,,,,
+,,,,,,"I see sum is 69 hours for payment system
+So it looks fair enough
+But here we sould allocate the time for: 
+- testing while developing (it could take a most of the time)
+- set up on dev and prod environment
+- documentation (optional, but would be good)
+- unit tests (optional)
+
+So in my opnion payment integration could take 80 hours (2 weeks)
+If include parial payments and other things - ~1 more week (+-40 hours)",,,,,,,
+,Price Service,,,,,,,,,,,,
+,,Quote calculation,20,"- Calculates pricing based on date range, base price, vehicles, add-ons, rules, tax, and discount codes
+- Includes rules such as seasonal pricing and length-of-booking adjustments
+- Applies traveler service fee (fixed or percentage, configured in super admin panel)
+- Applies fleet admin service fee (fixed or percentage, configured in super admin panel)
+- Returns detailed line items, total price, and deposit breakdown",Chcekced,,,,,,,,
+,,,,,,,,,,,,,
+,Availability Service,,,,,,,,,,,,
+,,Campervan Availability,16,"- Retrieves availability dates for a specific campervan within a given date range
+- Used in booking date pickers, search filters, and booking validation",Chcekced,,,,,,,,
+,,Turnaround time,2,"- Adjust logic to exclude buffer days after each booking
+- Use fleet admin’s configured turnaround value
+- Also handle time for cleaning
+- Campervan sometimes needs cleaning and won't be ready by 10am
+need to block off the pickup time before 10
+2hr prep for each campervan
+fleet admin need to have the option to define the prep/cleaning hour",Chcekced,,,9/4/2025,Report,,,,
+,,,,,,,,,,,,,
+Public Webpage,,,,,,,,,provide iframe support for fleet admins,,,,
+,,,,,,,,,,,,,
+,Browse Campervan,,,,,,,,,,,,
+,,Campervan List,8,"- Display a list of available campervans based on default criteria or current availability window
+- Replace FE API
+- Paginated",checked,,,,,,,,
+,,Campervan search,8,"- Allow users to search by keyword, pickup location, or campervan name/title
+- Simple database query-based search (no external service like Elasticsearch)
+- Replace FE API
+- Similar to what we have now",checked,,,9/4/2025,,,,,
+,,Campervan filter,8,"- Filter campervans by location and date range
+- Additional filters: vehicle type, seating capacity, sleeping capacity, features, and comfort options (based on current list)
+- Replace existing frontend API with new backend implementation
+- Similar to what we have now",checked,,,9/4/2025,,,,,
+,,Campervan sort,4,"- sort by position or price
+- Similar to what we have now",checked,,,9/4/2025,,,,,
+,,Campervan detailed view,14,"- Show full details of a selected campervan, including name, images, description, vehicle details, amenities, location, extras, daily price, and calendar availability
+- Replace the current frontend API call with the new backend
+- Pull all required details from the new system instead of Wheelbase Pro",checked,,,,,,,,
+,,Alternative Date Suggestion,12,"- When no campervan is found for the selected dates, suggest alternative options
+- Search for available campervans in the same city for nearby or future dates
+- Assuming we use simple algorithm
+   • Trigger a new query to search for available campervans:
+   • In the same location
+   • For the same duration
+   • Within a search window (e.g., +7 days from original check-in)",checked,,Discuss the algorithm,,,,,,
+,,Quotes,4,"- Estimate the total booking price for a campervan based on:
+• Date range 
+• Selected extras/add-ons 
+• Fleet-specific pricing rules and fees
+- Used in booking summary, search results, and campervan details
+- Display the price breakdown. The calculation uses the price service listed in system section.",checked,,,,,,,,
+,,,,,,,,,,,,,
+,Locations,,,,,,,,,,,,
+,,Location list,6,"Retrieve and display a list of fleet locations (cities or pickup points)- Used in search filters, campervan listings, and booking forms
+",checked,,,9/4/2025,,,,,
+,,,,,,,,,,,,,
+,,Addons / Equipments / items,6,"API to receive a list of items, show detailed information.",checked,,,9/4/2025,,,,,
+,,,,,,,,,,,,,
+,Others,,,,,,,,,,,,
+,,WBP to New App API data transformation,24,"- Repalce WheelbasePro backend with the in house backend api
+- For each api call, match data, transform data if needed",checked,,,9/16/2025,,,,,
+,,,,,,,,,,,,,
+,User account,Sign Up,4,"- Email-based sign-up plus SSO support (next line)
+- Email verification via link or code",Checked,,,9/4/2025,,,,,
+,,SSO Support,8,"Supports
+- Google
+- iCloud",Checked,,,9/4/2025,,,,,
+,,Profile on Signup,2,"- Basic profile creating on sign up, first name, last name, no image
+- Without 2FA",Checked,,,9/4/2025,,,,,
+,,Profile photo add/update,8,"- Support profile photo
+- User FE to preview,  compress image and crop
+- Does not transcode image to various resolutions",,,,10/16/2025,,,,,
+,,Login,3,- User account login using email and password,Checked,,,9/4/2025,,,,,
+,,Forgot Password,5,"- User enters email address
+- System sends HTML email with password reset link",Checked,,,9/4/2025,,,,,
+,,Header avatar,2,"- Display name when user is signed in
+- When user is not signed in, show login option
+- Use shorf form of first name. Ie, Henry would show H.",Checked,,,9/4/2025,,,,,
+,,,,,,,,,,,,,
+,User account,,,,,,,,,,,,
+,,Manage Payment Methods,24,"- List saved payment methods (e.g., cards)
+- Add new card using Stripe
+- Remove saved cards
+- Securely handle and display data via Stripe integration",Checked,,,9/4/2025,,,,,
+,,Personal Details & Security,8,"- Allow user to update name
+- Allow user to change password securely, ask for current password and new password.
+- Without 2FA",Checked,,,9/4/2025,,,,,
+,User Dashboard,,,,,,,,,,,,
+,,Dashboard Home,8,"- User landing dashboard showing high-level overview (e.g., upcoming bookings, quick actions)",,,,,,,,,
+,,Booking Lists,8,- Display upcoming and past bookings linked to the logged-in user,Checked,,,9/4/2025,,,,,
+,,Booking Detailed View,16,"- View booking details
+- Add “Update” and “Cancel” buttons",Checked,,,9/4/2025,,,,,
+,,Bokoing Detailed View Magic Token,4,"- Generate and validate a magic token to allow users to access booking details without signing in (e.g., from confirmation or reminder emails)",Checked,,,9/4/2025,,,,,
+,,Update Booking,30,"- Modify booking details
+- Pre-fill page with existing data
+- Recalculate pricing
+- Adjust payment via Stripe (charge or refund)
+- Apply booking adjustment policy
+- Send booking modification email
+- Respect refund policy",Checked,"There can be many issues such as:
+If the full price was paid and the user updated to a lower price
+If the partial price was paid and the user updated to a lower price
+If the user updated the date but it is already booked by another user
+And so on
+
+We need to find out all the cases and take them all into account",,9/4/2025,,,,,
+,,Cancel Booking,8,"- Cancel booking with confirmation
+- Apply refund rules (none, partial, or full)
+- Send cancellation email",Checked,,,9/4/2025,,,,,
+,,Continue Abandoned Booking,8,"- User clicks email link to resume an abandoned booking
+- assuming we don't need magic token for this
+- Load booking details
+- Allow checkout
+- Check campervan availability",Checked,,,9/4/2025,,,,,
+,,Booking Message List,6,"- List of booking threads
+- Show unread indicator (e.g., red dot) on threads with unread messages
+- similar to bookings, before we get into the message thread of each booking",Checked,,,9/4/2025,,,,,
+,,,,,,,,,,,,,
+,Checkout,,,,,,,,,,,,
+,,Custom checkout page,20,"- Build a custom front-end checkout flow
+- Integrate Stripe as the payment gateway
+- Embed Stripe’s UI components to ensure credit card data goes directly to Stripe (PCI compliant)
+- Handle payment errors and user feedback
+- Display pricing summary including extras and taxes
+- Store booking and payment reference info in the database
+- Assumes Stripe handles transaction and receipt details",Checked,,,9/2/2025,,,,,
+,,Partial Payment,12,"- Enable 50% upfront payment if booking is made more than 30 days in advance
+- Remaining balance is due before pickup (typically before customer arrives)
+- System sends payment reminder email N days before the booking date
+- For bookings ≤ 30 days, full payment is required at time of booking
+- Skip annual, next phase. Designed for annual policy: 50% upfront, 50% late. Assuming no annual membership.
+- Assuming no membership plan concpt.
+- Display information of upcoming payment and past past payment for this booking.",Checked,,,9/2/2025,,,,,
+,,,,,,,,,,,,,
+,Payment Unit Tests,Unit Test,16,"- Write unit tests for payment-related flows: 
+• Booking creation with payment 
+• Booking update with price adjustment and refund/charge 
+• Booking cancellation with refund handling
+- Validate transaction recording and Stripe integration behavior",Checked,,,9/2/2025,,,,,
+,,,,,,,,,,,,,
+,Customer to Fleet Review,,,,,,,,,,,,
+,,Review category,4,"- Up to 5 review categories, ie, cleaniness, value for money, staff
+- defined systemwide in database, not definable in admin panel
+- each category has a 5 point system",Checked,,,9/2/2025,,,,,
+,,Write review,16,"Customer rate review
+- Email review link after each trip
+- Magic link
+- 5 point system for each category
+- And a text only comment
+- Recalculate the average points for each category and the total score
+- Total score is 10 point system, similar to booking.com, simply formula
+- UI interface to write review
+- review is based on campervan-booking",Checked,,,9/2/2025,,,,,
+,,,,,,,,,,,,,
+,,Read review,12,"Read a list of reviews
+- show total score, 10 point system, should be pre-calculated
+- show point for each category, 5 point system
+- show review
+- pagination
+- ordered by review date
+- assuming there is no other filter or sort in this phase",Checked,,,9/2/2025,,,,,
+,,Read review summary,6,"- similar ot the review summary in booking.com, one on top of apartment detaield view and one at the bottom.",Checked,,,9/4/2025,,,,,
+,,,,,,,,,,,,,
+,AI Chat Assistance - customers with reservations,,,- Cannot reuse the messaging app between the customer and the fleet owner,,,,,,,,,
+,,AI note About the vehicle and rental,4,"- A text field note about the vehicle, such as faq, important information. Text note that the AI can read.",,,,,,,,,
+,,Data compilation,8,"- Compile relevant information for the customer from the database, such a vehicle spec, vehicle scheudle (in case the user needs to extend the rental)
+- Creates an API",,,,,,,,,
+,,User Identity & Permissions Check,3,- Validate user ID/session before sharing booking data - Prevents unauthorized access to other users’ bookings,,,,,,,,,
+,,Chat Session Context Builder,6,"- Middleware in n8n or backend that fetches info and composes prompt - e.g., “User has booking #XYZ, here’s the vehicle summary…”",,,,,,,,,
+,,OpenAI Integration (via n8n),4,"- Use n8n’s OpenAI node for prompt/response - Configure error handling, streaming (if needed), and retry logic",,,,,,,,,
+,,AI Message Routing Logic,4,"- Use logic in n8n to detect intent: info request, modify, cancel, etc. - Trigger corresponding workflow branch",,,,,,,,,
+,,Custom Action Handler (Optional),0,"- Assuming not in this phase
+- Handle special cases: e.g., extend booking, report issue, contact fleet owner - May call internal APIs or trigger human follow-up",,,,,,,,,
+,,n8n Workflow Integration,4,"- Set up flexible workflows in n8n for escalation, fallback, or integrations (e.g., Slack, email, Intercom, Twilio)",,,,,,,,,
+,,,,,,,,,,,,,
+,AI Chatbot Support - General User,,,,,,,,,,,,
+,,Intercom integration,0,"General AI help, included in general support. Assuming custom data is not reuqired to pass into Intercom.",,,,,,,,,
+,,,,,,,,,,,,,
+,Privacy and Data Management,,,TBD,,,,,,,,,
+,,,,,,,,,,,,,
+,Analytics,Google analytic integration,2,"Integration on public website page, without custom event tracking.",,,,,,,,,
+,,,,,,,,,,,,,
+,Reports,Financial report,8,"- start date, end date, itemized rentals (booking id, start date, end date, amount, tax)
+- total amount and total tax in the duration.
+- group by vehicle",,need to understand the content,,,,,,,
+,,Financial report - print to pdf,6,"print financial report to pdf, simple fomrat",,,,,,,,,
+,,Usage report,,"same as financial report?
+- does it need to show the usage of all additional items?",,,,,,,,,
+,,,,,,,,,,,,,
+,Check in,Travler check in pages,,,,,,,,,,,
+,,,,,,,,,,,,,
+,,,,,,,,,,,,,
+,Sync Marketing Email Contact,Sync Mailchimp Contact,,Sync email contacts from app to marketin email like mailchimp,,,,,,,,,
+,,,,,,,,,,,,,
+,,,,,,,,,,,,,
+,IFrame embed,,,,,,,,,,,,
+User Dashboard & Fleet Admin,,,,,,,,,,,,,
+,Message Center,,,,,,,,,,,,
+,,Notification,4,- Send email notification to user when a new message is received and they are offline,Checked,,,8/28/2025,,,,,
+,,Twilio integration,2,- Set up Twilio account and messaging service configuration,Checked,,,8/28/2025,,,,,
+,,Twilio Backend integration,8,"- Implement server-side logic: 
+• User identity mapping 
+• Access token generation 
+• Chat room creation 
+• Webhook endpoints",Checked,"Twilio Conversations API
+Replacement for Programmable Chat.
+Lets create chat “conversations” that can include multiple participants (users).
+Supports messaging over SMS, WhatsApp, and Web chat.
+We can:
+- Map a user identity → participant in a conversation.
+- Generate access tokens (using Twilio’s SDKs or your own backend).
+- Create chat rooms → called “conversations.”
+- Configure webhooks for message events, participant added/removed, delivery, etc.
+https://console.twilio.com/us1/develop/conversations/overview?activeTab=summary",,8/28/2025,,,,,
+,,Booking Message Frontend Chat UI,16,"- Design and build booking-level messaging UI 
+• Text-only support 
+• Display message history 
+• Enable live sending and receiving of messages",Checked,,Text only,8/28/2025,,,,,
+,,Image Support,,,,,,,,,,,
+,,Initial load,8,"Initial loads, load the last N messages initially.",Checked,,,8/28/2025,,,,,
+,,HIstory chat loading,6,"On scrolling back it loads older history, calling the API and render older messages.",Checked,,,8/28/2025,,,,,
+,,Webhook Handling,4,"- Process Twilio events such as: 
+• User joined/left 
+• Message sent/deleted",Checked,,,8/28/2025,,,,,
+,,Authentication Linking,3,"- Securely link logged-in users to Twilio
+- Generate and manage Twilio access tokens",Checked,,,8/28/2025,,,,,
+,,,,,,,,,,,,,
+,Media File Support in Chat ,support photos and videos (Photo + Video Files in Chat),,Support photos and videos (Photo + Video Files in Chat),,,,10/16/2025,,,,,
+,,Frontend Upload UI,6,"File select UI, preview, validation, progress display",,,,10/16/2025,,,,,
+,,Twilio Media Upload,4,Use Twilio Conversations media API to upload files,,,,10/16/2025,,,,,
+,,Display Media in Chat,4,"Render thumbnails for images, embedded video for supported formats",,,,10/16/2025,,,,,
+,,Backend Security,3,"Validate media types, proxy file handling, optional signed URLs",,,,10/16/2025,,,,,
+,,Storage & Retention Handling,2,Handle media expiration/lifecycle if required,,,,,,,,,
+,,,,,,,,,,,,,
+,Twilio Video Calling ,,,,,,,,,,,,
+,,Twilio Video Room Setup,6,"Setup Twilio Video credentials, token generation, and room API",,,,10/16/2025,,,,,
+,,User Interface for Call,6,"Call button, camera/mic toggle, full screen UI, call duration, etc.",,,,10/16/2025,,,,,
+,,Signaling Integration,4,"Detect incoming/outgoing call requests (e.g., via chat or alert modal)",,,,10/16/2025,,,,,
+,,Device Handling,5,"Camera/microphone permission handling, fallback/error states",,,,10/16/2025,,,,,
+,,Video Call Event Handling,2,"Track join/leave events, timeouts, participant errors",,,,10/16/2025,,,,,
+,,,,,,,,,,,,,
+,General support,Intercom integration,4,"- General intercom integration. Assume system admin manages and create the content.
+- With AI support
+",,,,,,,,,
+,,,,,,,,,,,,,
+Fleet Admin Panel,,,,"- Assuming mobile responsive is not a requirement.
+- Support tablet form, desktop form
+- Full mobile responsive support for messaging",Checked,,,8/25/2025,,,,,
+,Account,Sign Up,4,"- Email-based sign-up only
+- Email verification via link or code
+- Reduced time from similar feature from user",Checked,,Does this require approval?,8/21/2025,,,,,
+,,Create personal profile,2,"- First and last name
+- Phone (without validation)
+- initial phase to have one admin for each fleet, later to support more users and roles for each fleet
+- build it in the way so that it's easy to change architecturally ",Checked,,,,,,,,
+,,Create fleet profile,4,"- Fleet business name
+- Website
+- Phone number (without validation)
+- Email (without validation)
+- Timezone should be associated to a location
+- Default locale
+- Default currency",Checked,,,,,,,,
+,,Login,2,"- User account login using email and password
+- Reduced time from similar feature from user",Checked,,,8/21/2025,,,,,
+,,Forgot Password,2,"- User enters email address
+- System sends HTML email with password reset link
+- Reduced time from similar feature from user",Checked,,,8/21/2025,,,,,
+,,UI Language,3,"- Enable language switching in this section of the admin UI
+- Assumes support for two languages
+- Does not include translation of content",Checked,,,9/5/2025,,,,,
+,,,,,,,,,,,,,
+,Role,,,,,"I think it would be useful for a super admin to have access to any fleet admin panel. For example, the admin user can switch to the fleet panel in the dropdown and see the same thing that a specific fleet admin sees. This can be useful for troubleshooting some issues that may have occurred in any fleet admin panel and checking if everything is working properly or any other issues or questions.",,,,,,,
+,,Role,4,"- secondary role, manager or staff
+- assign role(s) to each controller and test",Checked,,,9/16/2025,,,,,
+,,,,,,,,,,,,,
+,Permission,,,,,,,,,,,,
+,,Permission,4,"- manager or staff can't view financial information
+- assign permissions(s) to each controller and test",Checked,,,9/16/2025,,,,,
+,,,,,,,,,,,,,
+,Fleet profile,,,,,,,,,,,,
+,,Fleet on Creating Approval Process,2,"- On creating a fleet, the default status is set to pending, an admin must approve
+- Block access until account is approved. Not seeing any feature related to the fleet at all.
+- Does not include the UI interface for admin to approve or reject",Checked,,,8/26/2025,,,,,
+,,Update fleet profile,2,"- Fleet business name
+- Website
+- Phone number (without validation)
+- Email (without validation)
+- Default locale
+- Default currency",Checked,,,8/21/2025,,,,,
+,,UI Language,1,"- Enable language switching in this section of the admin UI
+- Assumes support for two languages
+- Does not include translation of content",,,,,,,,,
+,,,,,,,,,,,,,
+,Campervan Management,,,,,,,,,,,,
+,,List Campervans,12,"- Display a list of all campervans associated with the current fleet admin
+- Includes pagination and basic detail preview",Checked,,,8/21/2025,,,,,
+,,Search,0,- Search by name (deferred to future phase),Checked,,,8/21/2025,,,,,
+,,Filter,0,- Filtering campervans (deferred to future phase),Checked,,,8/21/2025,,,,,
+,,Create Campervan,8,"- Create and register a new campervan with basic configuration
+- Includes form validation and data model integration",Checked,,,8/21/2025,,,,,
+,,Batch Create Campervan,,,,,,,,,,,
+,,Update Campervan,8,- Edit existing campervan details via form interface,Checked,,,8/21/2025,,,,,
+,,View Campervan,8,"- View campervan details in a read-only format
+- Calendar availability view is excluded in this phase",Checked,,,8/21/2025,,,,,
+,,Delete Campervan,2,- Soft delete (marks campervan as inactive without removing from the database),Checked,,,8/21/2025,,,,,
+,,,,,,,,,,,,,
+,,Base Specifications,16,"- Assumes all fields are free-form text or numbers (no lookup tables or presets)
+- Vehicle type (enum)
+- Seatbelt, Year, length (numbers)
+- make, model, trim, class (string)
+- Transimission, Fuel Type (enum)
+- km/l, GVWR, Dry weight, amps (number)
+- height, width, length with hitch, box length (number / 100 or string)
+- water tank, fuel, propane, black water, gray water (number /100 or string)
+- sleep, sleep adult, sleep children (numbers)
+- king bed, queen bed, full bed, twin bed (numbers)
+- internal info
+  - license plate (string)
+  - replacement value (number)
+  - mileage (number)",Checked,,"Need to know what fields are needed or not needed from this page.
+
+https://dashboard.wheelbasepro.com/rentals/469927/edit",8/25/2025,,,,,
+,,Unit preference,8,"- Same options as in WBP
+  - Distance
+  - Length
+  - Weight
+  - Liquids
+- Fleet admin has the ability to choose unit
+- Render chosen units for vehicle",Checked,,,8/25/2025,,,,,
+,,"Import year,make,model, and trim",0,"- Assuming thse are free text fields, no relational data",,,,,,,,,
+,,Photos Management,16,"- Add, remove, reorder campervan photos
+- No auto-enhance or category-specific handling (e.g., interior vs. exterior)",Checked,,,8/21/2025,,,,,
+,,YouTube Video Link Support,8,"- Support YouTube video link for media collection
+- Assuming it does not validate the link
+ - Display video on UI if the content is a YouTube ilnk
+- Backend and db support",Checked,,,8/21/2025,,,,,
+,,Feature Flags,8,"- Toggle key campervan features (e.g., toilet, kitchen sink, radio) using boolean flags
+- Support feature category
+- Up to 50 features, 5 categories
+- Boolean (true/false only), without any other data type
+- DB setup, UI & BE create and update support",Checked,,,8/21/2025,,,,,
+,,Associate Locations/Features,4,- Assign campervan to locations and feature categories,Checked,,,8/21/2025,,,,,
+,,Tax Association,0,"- Assign tax rules or codes to campervan
+- Remove this, to simplify things, we associate tax rate to a location, not a vehicle",Checked,,,8/25/2025,,,,,
+,,Base Rate & Deposit,4,"- Set base daily rate and required security deposit
+- Assuming deposit is charged on picking up the car, not through the app.
+- On the day of pick up, have the system to charge the deposit fee, handle failure, in this case, another form of payment",Checked,,"When to charge deposit? How to charge? 
+- to revisit",8/21/2025,,,,,
+,,,,,,,,,,,,,
+,,Block Date Range,16,"- Block availability for specified date ranges for a vehicle
+- Add, edit, and remove blocked periods",Checked,,,8/28/2025,,,,,
+,,Upcoming Bookings,4,"- List upcoming bookings tied to a specific campervan
+- Next N bookings, not all",Checked,,,8/28/2025,,,,,
+,,Content Language,4,"- Multilingual support for name , highlight, and description content. Does not include admin UI language.",Checked,,,8/21/2025,,,,,
+,,UI Language,4,"- Enable language switching in this section of the admin UI
+- More content, take longer time
+- Assumes support for two languages
+- Does not include translation of content
+- Assuming enum like vehicle type is  limited to  15 max each and it is stored in a file, not in a database",Updated,,assume it's configurable in the system variable,9/5/2025,,,,,
+,,,,,,,,,,,,,
+,Location management,,,,,,,,,,,,
+,,List Locations,6,"- Display all locations for the fleet admin
+- No pagination or search in this phase",Checked,,,8/25/2025,,,,,
+,,Create Location,10,"- Create a new location 
+• Use geo service to auto-fetch coordinates. Assuming we cover the address that is translateable to coordinates by Google Map Api.
+• Handle map display
+- Handle notes (assuming this is not needed)
+• Associate location with a user
+- defined tax rate
+- Bank account is linked to fleet admin, not individual location like how it's done in WBP",Checked,,,8/25/2025,,,,,
+,,Update Location,4,- Edit location information,Checked,,,8/25/2025,,,,,
+,,Delete Location,3,"- Soft delete with association checks
+- Handle error messages for linked data, ie, if there is any campervan associated to this location then the location cannot be deleted",Checked,,,8/25/2025,,,,,
+,,Hours of operation,0,Assuming we use the pick up and drop off time,Checked,,Assuming we use the pick up and drop off time,8/25/2025,,,,,
+,,Pickup/Dropoff Hours,12,"- Unable to pickup / drop off flag
+- Pickup Begins Hour and Min (15 mins interval)
+- Pickup Ends Hour and Min (15 mins interval)
+- Basic validation that Pickup Ends cannot be before Pick up Begins
+- Add logic for pick up and drop off on checking out a vehicle",Checked,,,8/25/2025,,,,,
+,,Special Hours,6,"- Name, date, available for pickup, available for drop off, repeats
+- List, create, edit
+- Add logic on checking out a vehicle",Checked,,,8/25/2025,,,,,
+,,Content Language,0,"- Assuming content language is not needed here, same as WBP",Checked,,,,,,,,
+,,UI Language,2,"- Enable language switching in this section of the admin UI
+- More content, take longer time
+- Assumes support for two languages
+- Does not include translation of content",Checked,,,8/25/2025,,,,,
+,,Timezone,12,"- Each location is assigned a specific timezone
+- Dates and times selected by customers are interpreted in the timezone of the pickup location
+- All displayed information (e.g., booking start/end, reminders) respects the location’s local time
+- Cron services (e.g., reminders, auto-charges) execute based on the location’s timezone rather than system/server time",Checked,,,8/21/2025,,,,,
+,,,,,,,,,,,,,
+,,,,,,,,,,,,,
+,Addons Management,,,,,,,,,,,,
+,,List Addons,8,"- List all addons and fees
+- No pagination, filtering, or search in this phase
+- Assuming inventory management is not needed",Checked,,,8/25/2025,,,,,
+,,Create Addon,8,- Create new addon or fee item,Checked,,,8/25/2025,,,,,
+,,Update Addon,4,- Edit existing addon,Checked,,,8/25/2025,,,,,
+,,Delete Addon,2,- Soft delete addon with validation,Checked,,,8/25/2025,,,,,
+,,,,,,,,,,,,,
+,,Photo,4,"- Support 1 image per addon
+- No downsizing
+- Crop image on frontend",,,,8/25/2025,,,,,
+,,Location Availability,2,- Select which locations this addon is available for,Checked,,,8/25/2025,,,,,
+,,Charge Type,0,- Assuming only a fixed flat fee is supported in this phase,Checked,,,8/25/2025,,,,,
+,,Daily Fee Calculation,4,"- If enabled, fee is charged per day
+- No support for min/max days",Checked,,,8/25/2025,,,,,
+,,Quantiyy available,2,The max quantity user can get for each booking. Assumnig there is no inventory tracking.,Checked,,,8/25/2025,,,,,
+,,Hidden Feature,3,- Option to hide addon from customer-facing UI but still associate internally,Checked,,,8/25/2025,,,,,
+,,Tax Rate,4,"- Assign tax rate per addon
+- Default is no tax",Checked,,,8/25/2025,,,,,
+,,Position,2,"- Define display order of addons manually, if the number is the same as another addon, the order is random between the addons",Checked,,,8/25/2025,,,,,
+,,Content Language,4,"- Localized name and description fields
+- Does not include admin UI language.",Checked,,,8/25/2025,,,,,
+,,UI Language,3,"- Enable language switching in this section of the admin UI
+- More content, take longer time
+- Assumes support for two languages
+- Does not include translation of content",Checked,,,8/25/2025,,,,,
+,,Applies to Rental Type,4,"- Specify applicable vehicle types (e.g., campervan, converted van)",Checked,,,8/25/2025,,,,,
+,,,,,,,,,,,,,
+,Other Fees Management,,,,,,,,,,,,
+,,Other Fees,8,"Handle Items like
+- cleaning fee (prep fee, by camper), assume it's configurable by each fleet admin, fleet admin setting
+- feet admin service fee (by commission), assume it's configurable in the system variable
+- customer service fee (by a set amount),assume it's configurable in the system variable
+- delivery fee (not needed)",,,DIscussion. Do we need any of this? Maybe prep fee.,,,,,,
+,,State Fee,0,- Deferred to a future phase,Checked,,,8/25/2025,,,,,
+,,Notes to guests,0,- Deferred to a future phase,Checked,,,8/25/2025,,,,,
+,,Delivery,0,- Deferred to a future phase,Checked,,,8/25/2025,,,,,
+,,MIleage,20,"- Type of fee
+- Unit: Mile or km
+- Name of the fee
+- Unlimited or charge
+- Tax rate
+- Tier pricing / Matching Tier
+- based free mile per day / reservation
+- Pricing levels list, add, delete
+- Input for miles based on the reservation, auto calculate the additional fees",Checked,,,8/28/2025,,,,,
+,,Generator,4,"Similar to Mileage, but without the unit of mile / km",Checked,,,8/28/2025,,,,,
+,,UI Language,2,"- Enable language switching in this section of the admin UI
+- More content, take longer time
+- Assumes support for two languages
+- Does not include translation of content",Checked,,,8/25/2025,,,,,
+,,,,,,,,,,,,,
+,,Pick up and return time dynamic pricing,24,"- 30 mins interval
+- assuming this is bounded by the pick up and drop off hours, the option is not available if it's before and after the pickup/drop off hours
+- dynamic pricing for pick up and return time
+- set the price and the time range
+- the same price for each day, so no dynamic pricing for day and time
+- displays a list of dynamic pricing
+- create a dynamic pricing range (from and to hh:mm), validates duplication and overlapping
+- update and delete a dynamic price range
+- displays the dynamic pricing on pick up and drop off time
+- update the time on price breakdown
+- each location has its own dynamic pricing configuration
+- see page in https://docs.google.com/spreadsheets/d/10HOSktB_oV2LQjyiqzqTLli4x8lAG5G_21BMO6uqzY0/edit?gid=1954310294#gid=1954310294
+",Checked,,only within business hour?,8/28/2025,,,,0.05,0.05
+,,Handoff Limit,0,"- the number of handoffs per person per day
+- assume we do this in future month, this will require staff scehdule management to understand the schedule for each staff and location, calculate the bandwidth etc",Checked,,Future phase,8/28/2025,,,,,
+,,,,,,,,,,,,,
+,Customer Management,,,,,,,,,,,,
+,,List,8,"- Display a paginated list of customers with name, email, and phone
+- Only shows customers belonging to the current fleet admin",checked,,,,,,,,
+,,Search,6,"- Search customers by name
+- Simple database query (no advanced filtering or fuzzy search)",checked,,,,,,,,
+,,Create,6,"- Add a new customer
+- Fields: first name, last name, email (used as primary key), phone, birthdate, locale/language, and address",checked,,,,,,,,
+,,Update,4,- Update customer profile information,checked,,,,,,,,
+,,User & Fleet Customer Association,6,"- Each fleet manages its own customer list
+- A fleet customer can be linked to a user account
+- A single user may be associated with multiple fleet customers
+- Need to have a user table and a fleet user table
+- Use email as a unique ID",checked,,,,,,,,
+,,UI Language,2,"- Enable language switching in this section of the admin UI
+- Assumes support for two languages
+- Does not include translation of content",,,,,,,,,
+,,,,,,,,,,,,,
+,Booking management,,,,,,,,,,,,
+,,List,8,"- List existing rentals and the abandon reservations from customers
+- Pagination
+- without search",Checked,,,8/25/2025,,,,,
+,,Filter,8,"- Created between
+- Departed between
+- Status: cancelled, current
+- Assuming there is no following filters: change requested, handed off, starts soon, approved, renter cancelled, expired, renter withdrew, declined",Checked,,"Status:
+approved - needed
+handed off -nice to have
+- cancelled status is enough, don't need renter cancelled",8/25/2025,,,,,
+,,Predefined List - Quote List,4,"- Waiting on renter - defined by user, triggers abandoned email notification
+- To simplify, draft / quote are the same, just one status, does not send email to user and it does not triggered abandoned email notification
+- Assuming no concept of expired or rejected
+- Assuming no InstaMatch concept",Checked,,,8/25/2025,,,,,
+,,Predefined List - Current & Upcoming List,4,- Current and Upcoming,Checked,,,8/25/2025,,,,,
+,,Search,0,Assuming search is not incluced in this scope,Checked,,,8/25/2025,,,,,
+,,Create,12,"- Admin to create rental on behalf of the customer. 
+- Select a date range, vehicle, and addons, etc.
+- Accept descount code
+- Not possible with iDEAL payment here, so an alternative payment must be provided.
+- Associate to a customer, customer does not necessary have to verify email. Create a new customer inline if the customer does not exist.
+- Will try to reuse the existing UI component",Checked,,iDEAL payment not possible,8/25/2025,,,,,
+,,Detailed view,10,"- View the details, campervan, addons
+- without activities, drivers, calendar, note, documents and files, emails, reviews, and inspection photos
+- show information that users view",Checked,,,8/25/2025,,,,,
+,,Detailed view - transaction list,4,The transaction history of the booking,Checked,,,8/25/2025,,,,,
+,,Update booking,8,"Date range, addons, etc",Checked,,,8/25/2025,,,,,
+,,Update booking - update charge,8,"Calculate the difference, make the necessary charge or refund",Checked,,,8/25/2025,,,,,
+,,Offline Payment,0,"Support offline payment like Cash, check, others, 
+- how will they pay the commission? may have to disable the feature.
+- Assuming this will be done in future phase",Checked,,To discuss,8/25/2025,,,,,
+,,Credit card payment,8,Support credit payment. Admin uses the customer's credit card to pay the campervan,Checked,,,8/25/2025,,,,,
+,,iDEAL payment,0,Not possible from fleet admin side,Checked,,,8/25/2025,,,,,
+,,Reservation Note,4,"One text field, does not track history",Checked,,,8/25/2025,,,,,
+,,UI Language,2,"- Enable language switching in this section of the admin UI
+- Assumes support for two languages
+- Does not include translation of content",Checked,,,9/5/2025,,,,,
+,,,,,,,,,,,,,
+,Insurance Management,,,,,,,,,,,,
+,,List,8,"- Display all insurance plans
+- No pagination, filter, or search in this phase",Checked,,"Need to discuss more, if they don't have their own insurance. JollyCampers to provide some basic insurance plans. For limited countries only.",,,,,,
+,,Create,8,"- Add new insurance plan
+- Name and per-day pricing only",Checked,,,,,,,,
+,,Update,4,- Edit insurance plan details,Checked,,,,,,,,
+,,Delete,2,"- Soft delete
+- Does not affect existing bookings that already applied the plan",Checked,,,,,,,,
+,,Tax,2,- Associate tax rate to the insurance plan,Checked,,,,,,,,
+,,Content Language,4,- Multilingual support for name and details content. Does not include admin UI language.,Checked,,,,,,,,
+,,UI Language,2,"- Enable language switching in this section of the admin UI
+- Assumes support for two languages (add 1h per additional language)
+- Does not include translation of content",Checked,,,9/5/2025,,,,,
+,,,,,,,,,,,,,
+,Fleet to Customer Review,,,,,,,,,,,,
+,,Customer Reviews ,12,"- Assumsing this is associated to a booking
+- user -> booking -> review
+- each user / fleet user can have multiple review
+- each review has 5 points system, datetime, and a comment.
+- When we select a user, we can view the reviews for the user
+- Read only
+- without sub category",Checked,,"- Should this be associated to a booking?
+- Should this be shared among all the fleets?",8/28/2025,,,,,
+,,Review a customer,6,"- Give reivew based on a reservation
+- 5 points system and a text note.",Checked,,,8/28/2025,,,,,
+,,UI Language,1,"- Enable language switching in this section of the admin UI
+- Assumes support for two languages
+- Does not include translation of content",Checked,,,9/5/2025,,,,,
+,,,,,,,,,,,,,
+,Calendar View,,,,,,,,,,,,
+,,Calendar / Vehicle list,28,"- Use a third party library that support calendar timeline view, such as full calendar (https://fullcalendar.io/docs/timeline-standard-view-demo) or syncfusion
+- Render a list of campervans, assuming the library handles large list of campervans
+- Note that there is an additional license charge for the library
+- Show approved status bookings only
+- Show blocked dates
+- controls, next week, previous week, monthly view, weekly view, assuming it's supprted by the calendar library.",Checked,,,8/25/2025,,,,,
+,,Reservation Overview Modal,8,"- Displays reservation overview, quote, without note
+- button to reservation details ",Checked,,,8/25/2025,,,,,
+,,Choose date,4,Choose date and jumps to the selected date,Checked,,,8/25/2025,,,,,
+,,Resource date range select,6,"- Select a date range on a resource with mouse
+- displays a modal with option to make the car unavailable
+- does not have start quote button",Checked,,,8/25/2025,,,,,
+,,Calendar view to support pickup and drop off time,0,"- Pick up and drop off time of the day for each vehicle
+- Assuming this is a feature from the library",Checked,,,8/28/2025,,,,,
+,,UI Language,0,"- Enable language switching in this section of the admin UI
+- Assumes support for two languages
+- Does not include translation of content
+- Assuming the library supports UI translation , ie https://fullcalendar.io/docs/locale-demo",Checked,,,9/5/2025,,,,0.05,0.043
+,,,,,,,,,,,,,
+,Discount Codes Management,,,,,,,,,,,0.0466,
+,,List,8,"List all discount codes for the fleet admin
+- No pagination, search, or filtering in this phase",Checked,,,,,,,0.0966,0.043
+,,Create,12,"- Define code (English alphabet only, no special characters or spaces)
+- Associate discount code with one or more locations
+- Select discount type: flat amount or percentage
+- Apply to either daily rate or total price
+- Define start date and end date
+- Option to apply based on shopping dates or travel dates
+- Assumptions:
+  • No restriction by length of stay
+  • No filtering by vehicle country, RV type, or first-time renters
+  • No cap on redemptions per user or in total- One discount per booking maximum
+",Checked,,,,,,,,
+,,Update,4,"- Update discount code details
+- Changes do not affect quotes or bookings that already used the discount",Checked,,,,,,,,
+,,Delete,3,"- Deactivate (soft delete) the discount
+- Discount remains valid for existing bookings that already applied it
+",Checked,,,,,,,,
+,,Apply Discount,6,"- Apply a discount to a quote
+- Discount amount is fixed at the time of quote creation
+- Changing the code later does not retroactively modify existing quotes
+",Checked,,,,,,,,
+,,UI Language,2,"- Enable language switching in this section of the admin UI
+- Assumes support for two languages (add 1h per additional language)
+- Does not include translation of content",Checked,,,,,,,,
+,,,,,,,,,,,,,
+,Settings,,,,,,,,,,,,
+,,Min nights,0,"- Min night for each reservation
+- Already incluced in Minimum Booking Nights Rule",Checked,,,,8/21/2025,,,,
+,,Charge by day or night,0,Asssuming it's charge by day. Move charge by night option to future phase.,Checked,,"- Charged by night is required, simlar to hotel, pick up at 5pm, return at 10am.
+- charge by day, 10am pickup, 10am drop off,",,8/21/2025,,,,
+,,Turnaround time,2,"-  Adds a fleet admin–configured buffer (in full days) between bookings
+-  Ensures sufficient time for cleaning and preparation after a return
+-  Booking system automatically blocks availability based on the specified turnaround duration
+-  Applies at the fleet level (not configurable per vehicle)
+- Add a numeric input in the fleet admin settings panel
+- Store and retrieve the turnaround value per fleet- Default to 0 if unset
+- Does not include the logic of vehicle availability",Checked,,,,8/21/2025,,,,
+,,Default currency,2,"- Set default currency from an available list
+- Assuming currency setting is tied to a fleet profile, not a location",Checked,,,,8/25/2025,,,,
+,,UI Language,3,"- Enable language switching in this section of the admin UI
+- Assumes support for two languages (add 1h per additional language)
+- Does not include translation of content
+- https://fullcalendar.io/docs/locale-demo",Checked,,,,9/5/2025,,,,
+,Rules Management,,,,,,,,,,,,
+,,List,8,"- Display all rules in a simple list view
+- No search, filter, or pagination functionality in this pha
+",Checked,,,,,,,,
+,,Base Rule Logic,20,"- Shared rule setup components
+- Name the rule
+- Repeat annually option
+- Enable/disable toggle (not conditional by search dates)
+- Calendar-based date range selection
+- Apply rules to specific days of the week
+- Uses Wheelbase Pro (WBP) rule behavior as reference",Checked,,,,,,,,
+,,Date & Range Price Adjustments,8,"-  In the date range, set price to, increase / decrease percentage, increase / decrease amount 
+- Apply to vehicles, without vehicle type filter
+- Name the rule
+- Repeat annually option
+- Enable/disable, without only for certain search dates
+- Apply to date range, and day(s) of the week
+- Use WBP as reference",Checked,,,,,,,,
+,,Minimum Booking Nights,8,"- Min booking nights field
+- Apply to vehicles, without vehicle type filter
+- Name the rule
+- Repeat annually option
+- Enable/disable, without only for certain search dates
+- Apply to date range, and day(s) of the week
+- Use WBP as reference",Checked,,,,,,,,
+,,Advanced Pricing (Length-Based),8,"- Price adjustment based on length of booking, at least N days, then increase/decrease price by X percentage/amount. Support multiple adjustments.
+- Apply to vehicles, without vehicle type filter
+- Name the rule
+- Repeat annually option
+- Enable/disable, without only for certain search dates
+- Apply to date range, and day(s) of the week
+- Use WBP as reference",Checked,,,,,,,,
+,,Utilization & Optimization,0,"- Reserved for future phase
+- Advanced logic based on fleet occupancy or availability windows",Checked,,,,,,,,
+,,UI Language,2,"- Enable language switching in this section of the admin UI
+- Assumes support for two languages (add 1h per additional language)
+- Does not include translation of content",Checked,,,,,,,,
+,,,,,,,,,,,,,
+,Reports,,,,,,,,,,,,
+,,Monthly Rental Report,16,"- Display the report online
+- Monthly summary of rentals, showing a breakdown per booking: base price, add-ons, service fees, platform fees, etc.
+- Includes month selector for viewing reports from different periods",Checked,,,9/16/2025,,,,,
+,,Download PDF Report,8,Generate pdf file based on monthly rental report,Checked,,,9/16/2025,,,,,
+,,,,,,,,,,,,,
+,Tax Management,CRUD,16,"List, Create, Update, Soft delete (Soft delete prevents future association)",Checked,,,8/28/2025,,,,,
+,,Default,2,"Default tax rate, on creating a fleet admin, a default tax rate is created for the fleet admin. In Setting section.",Checked,,,8/28/2025,,,,,
+,,UI Language,1,"- Enable language switching in this section of the admin UI
+- Assumes support for two languages (add 1h per additional language)
+- Does not include translation of content",Checked,,,9/5/2025,,,,,
+,Payout Management,,,,,,,,,,,,
+,,Create,12,"Assuming there is only one payout method for each fleet maangement
+- find out what payout methods to support",,,,,,,,,
+,,Update,8,,,,,,,,,,
+,,,,,,,,,,,,,
+,,,,,,,,,,,,,
+,Others,,,,,,,,,,,,
+,,Stripe Connect,,"1.        Your backend creates a Stripe Connect account (via API) with type express
+2.        You generate a Stripe onboarding link using account_links.create
+3.        Fleet admin clicks the link and is taken to the Stripe-hosted onboarding UI
+4.        After completion, Stripe redirects them back to your platform
+5.        You store their Stripe account ID for future payouts
+6.        Optionally, you query their account status (e.g., charges_enabled, payouts_enabled) to display onboarding progress",,,,,,,,,
+,,Payout,4,"charge the customer, and Stripe automatically routes the correct share to the fleet admin’s account via a method called “destination charges” or “transfer to connected account.”
+",,,,,,,,,
+,,,,,,,,,,,,,
+,,Reservation preference,0,Future phase,,,,,,,,,
+,,Policies and documents,0,"Contract for booking, insurance policy.
+need to think about how they would receive the pre-filled documents",,,,,,,,,
+,,Delivery drivers,0,Future phase,,,,,,,,,
+,,Cosigned owners,0,Future phase,,,,,,,,,
+,,Checkout questions,0,Future phase,,,,,,,,,
+,,Integrations,0,Future phase,,,,,,,,,
+,,Reporting,0,"Future phase, need some reports.",,,,,,,,,
+,,,,,,,,,,,,,
+,Damage Check,,,Assuming this is done on a web app. Can consider making an iOS app release for this feature.,,,,,,,,,
+,,Check-in and check-out buttons,2,"In booking list, add a feature to add vehicle check-in and check-out photos",,,,10/12/2025,,,,,
+,,List of photo thumbnails,8,List of photos thumbnails for viewing,,,,10/12/2025,,,,,
+,,Check-in and check-out selection,4,Select between check-in and check-out photos,,,,10/12/2025,,,,,
+,,Add photo,4,Take photo with mobile phone,,,,10/12/2025,,,,,
+,,Upload photo,8,"Upload the photo to cloud, such as s3, may encode more to reduce photo size",,,,10/12/2025,,,,,
+,,Delete photo,2,,,,,10/12/2025,,,,,
+,,View photo,4,View full size photo on selecting a thumbnail,,,,10/12/2025,,,,,
+,,iOS app,0,Optional,,,,10/12/2025,,,,,
+,,Note,,Note for each photo? Log with timestamp?,,,,,,,,,
+,,,,,,,,,,,,,
+,Maintenance Management,,,,,,,,,,,,
+,,Create/edit an event,12,"- Date, duration, vehicle, note, status, type (repair, maintain, etc)
+- block dates to make rental unavailable
+- Damage maintenance is the same cocept",,,,10/12/2025,,,,,
+,,Maintenance list view,10,Past and upcoming events with filter (vehicle) and pagination,,,,10/12/2025,,,,,
+,,Maintenance event calendar view,10,Use the same calendar to display maintenance events,,,,,,,,,
+,,View a maintenance event,4,,,,,10/12/2025,,,,,
+,,DB & model setup,6,,,,,10/12/2025,,,,,
+,,Email reminder logic (cron),6,Remind N days before the event,,,,10/12/2025,,,,,
+,,,,,,,,,,,,,
+,Fleet Admin Support,Intercom integration,2,"- General intercom integration. Assume system admin manages and create the content.
+- This is available when a fleet admin signs into the dashboard
+- Pass in basic fleet admin information, such as user info, to Intercom
+- Not including additional work for passing custom data to intercom
+",,,,10/13/2025,,,,,
+,,,,,,,,,,,,,
+,Calendar Sync,Base Sync Module,10,"- delete the list of blocked dates
+- get the list of blocked dates and apply to the vehicle
+- download calendar file and parse, assuming this is standardized
+- cron service to update periodically, ie, every 10 mins",,,,10/13/2025,,,,,
+,,Goboony calendar integration,4,"- from Goboony to the system
+- add and update the calendar url",,,,,,,,,
+,,,,,,,,,,,,,
+,Notification,Bell notification,2,Show unread indicator (dot or count),,"To remove, in Notification development",,10/16/2025,,,,,
+,,Notification List API,6,"- API to return the last N notifications
+- Support unread count",,,,10/16/2025,,,,,
+,,Notification Table & Modal UI,10,"- UI to display dropdown/modal of recent notifications
+- Clicking shows full content or opens related page",,,,10/16/2025,,,,,
+,,Notification Routing & Links,4,"- Each notification can link to a booking, chat, etc.
+- Route to corresponding page when clicked",,,,10/16/2025,,,,,
+,,Mark as Read,2,"- API to mark notification as read
+- Update unread bubble",,,,10/16/2025,,,,,
+,,Unread Bubble Logic,2,- Show unread dot/badge until opened or marked as read,,,,10/16/2025,,,,,
+,,,,,,,,,,,,,
+,Websocket integration - Live Notification Update,,,,,,,,,,,,
+,,WebSocket Setup (Backend),4,"- Setup socket server (e.g., socket.io) and user session handling",,,,10/16/2025,,,,,
+,,Redis Pub/Sub Integration,4,- Use Redis for centralized pub/sub between server instances,,,,10/16/2025,,,,,
+,,Event Emitters for Notifications,4,"- Emit events for new messages, bookings, cancellations, etc.",,,,10/16/2025,,,,,
+,,WebSocket Frontend Listener,3,- Listen to WebSocket on client- Update UI in real-time,,,,10/16/2025,,,,,
+,,"Reconnect, Heartbeat, Cleanup",3,"- Handle edge cases, socket cleanup, reconnect logic",,,,10/16/2025,,,,,
+,,Store notifications in DB,2,Persist notifications for history / reload,,,,10/16/2025,,,,,
+,,Mark as read API,2,API to mark notifications as read,,,,10/16/2025,,,,,
+,,WebSocket connection (client),2,Connect to backend WebSocket server,,,,10/16/2025,,,,,
+,,WebSocket message handling,2,Push incoming notifications to local state,,,,10/16/2025,,,,,
+,,,,,,,,,,,,,
+,Digital handover,"-rental agreement (non-digital)
+- check id
+- search for damage
+- video externally and internally
+- fleet owner should update everything
+- photo for now
+- support damange photo update for customers
+",,,,"A digital handover should be something like below:
+Pick-up: Step-by-Step
+Fleet owner starts the process – The fleet owner begins the pick-up process on their phone through the Jolly Campers platform.
+Confirm pick-up start – The Traveller will receive a notification or be informed that the pick-up has started.
+Complete the form together – All information and photos are entered on the fleet owner’s device. Review details together with the Traveller, including mileage, fuel level, inventory, and any existing damages.
+Review & confirm – Once everything is completed, both parties review the form and confirm the pick-up on the fleet owner’s device.
+Return: Step-by-Step
+Open the booking in your Jolly Campers account.
+Tap ‘Finalise Return’ to begin the process.
+Follow the guided steps together with the Traveller.
+During the return:
+Inspect the camper – Carefully check both interior and exterior. Document cleanliness, any new damages, or changes since pick-up — all on the fleet owner’s device.
+Review agreements – Verify fuel level, mileage, return time, and any extras agreed upon at pick-up.
+Settle any additional costs – Handle refuelling, cleaning, or other costs directly with the Traveller when possible.
+Manage the deposit –
+If everything is in order → release the deposit.
+If there’s an issue → hold the deposit until it’s resolved.
+In case of disagreement → add photos and comments directly in the return form before submitting.
+Important: Always ensure the Traveller stays until the full return process is completed.
+Once submitted, you’ll receive a confirmation email with a link to the completed form. It will also be saved in your booking overview on the Jolly Campers platform for easy reference.",,,,,,,
+,,,,,,,,,,,,,
+Admin,,,,- Does not support multi languages,,,,,,,,,
+,AdminJS integration,AdminJS Integration,12,,Checked,,,8/28/2025,,,,,
+,,,,,,,,,,,,,
+,User management,,,,,,,,,,,,
+,,"User List, Read, Update, Delete",4,"- List all users, assuming email is the UID
+- Read, Update, Delete a user. Direct DB mapping, without join.",Checked,,,8/28/2025,,,,,
+,,,,,,,,,,,,,
+,Fleet Users,,,,,,,,,,,,
+,,LCRUD,0,Not needed,Checked,,,8/28/2025,,,,,
+,,,,,,,,,,,,,
+,Fleet management,,,,,,,,,,,,
+,,"List, Read, Update, Delete",4,"- List all fleets
+- Read each fleet detail
+- Update a fleet (basic info)
+- Delete - Set a fleet status to deleted
+- Default UI to model association without additional logic",Checked,,,8/25/2025,,,,,
+,,Approve Fleet,2,"- Approve - Set a fleet status from pending to active
+- Email fleet admin and admin",Checked,,,8/25/2025,,,,,
+,,Backend,4,- Build the backend to support fleet in the future,,,,,,,,,
+,,,,,,,,,,,,,
+,,,,,,,,,,,,,
+,Campervan feature/amenity management,,,Superuser access only,,,,,,,,,
+,,CRUD,16,"List, create, update, delete, group, icon",,,,,,,,,
+,,Multiple language support,6,Associate name to a language,,,,,,,,,
+,,Tax,0,Associate to tax if needed. not applicable.,,,,,,,,,
+,,,,,,,,,,,,,
+,Currency,Basic,8,"- Support for Euro (EUR) and British Pound Sterling (GBP)
+- Structure built in the database for future multi-currency support
+- No UI access or customization in this phase (currencies are fixed)
+- Currency setting is shared globally (not per fleet admin)
+- Includes handling currency in pricing, calculations, and display logic throughout the application
+- Includes logic for formatting, symbol display, and internal value storage
+- Payout in fleet default currency
+- Does not include setting the default currency on fleet admin settings",checked,,,8/21/2025,,,,,
+,,,,,,,,,,,,,
+,Vehicle Type,Vehicle Type,2,"- Campervan, Type A, B, C, etc
+- Database access only",,,,,,,,,
+Total,,,1585,,,,,,,,,,
+,,,,,,,,,,,,,
+,,,,,,,,,,,,,
+,,,,,,,,,,,,,
+,,,,,,,,,,,,,
+,,,,"Landing page, filter by geo location",,,,,,,,,
+,,,,Targeting EU countries,,,,,,,,,
+,,,,Fleet with its own set of languages,,,,,,,,,
+,,,,Each eu country has its own VAT tax rate,,,,,,,,,
+,,,,"Additional charge on retruning vehicle, associate to booking",,,,,,,,,
+,,,,Fleet owners mandatory,,,,,,,,,

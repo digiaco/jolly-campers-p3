@@ -1,0 +1,277 @@
+Category,Feature,Task,Hour,Description,Formula,Special note,Question
+Admin Dashboard API,,,,"Can export, generate reports, and drill down by owner/fleet, camper vehicle, or timeframe, and timezone, currency, locations if applicable",,,
+,Fleet & Booking Performance,,,,,,
+,,Occupancy Rate (%),4,% of total available nights booked,(Booked nights ÷ Total available nights) × 100,,
+,,Average Booking Length (days),4,Avg. nights per booking,Total booked nights ÷ Total bookings,,
+,,Utilization per Camper,4,Days rented per camper,SUM(booked_days) GROUP BY vehicle_id,,
+,,Revenue per Camper (€),4,Income per vehicle,SUM(total_price) GROUP BY vehicle_id,,
+,,Cancellation Rate (%),4,% of cancelled bookings,(Cancelled ÷ Confirmed) × 100,,
+,,Lead Time (days),4,Avg. time between booking and pickup,AVG(pickup_date - booking_date),,
+,,Repeat Booking Rate (%),5,Returning customers ratio,(Returning renters ÷ Total renters) × 100,,
+,,,,,,,
+,Financial & Marketing Performance,,,,,,
+,,Gross Booking Value (GBV),4,Total income before fees,SUM(total_booking_amount),Group by currency,Is it possibe to have multiple currency for each fleet admin? how do we show the report for locations?
+,,Commission Revenue (€),4,Platform earnings,SUM(total_booking_amount × commission_rate),Group by currency,what to do when there are multi currencies?
+,,Owner Payout (€),4,Total payouts to owners,SUM(owner_payouts),Group by currency,Group by countries
+,,Average Daily Rate (ADR),4,Avg. daily rental rate,Total booking revenue ÷ Total booked nights,Group by currency,or group by currency
+,,Conversion Rate (%),12,Visitors to confirmed bookings,(Confirmed bookings ÷ Visitors) × 100,"Group by currency, need to have visitors metrics
+- Can use Google Analytics to track unique visitors
+- Call Google Analytis to get the number of unique visitors",
+,,Cost per Acquisition (CPA),12,Ad spend per confirmed booking,Total ad spend ÷ Confirmed bookings,"Group by currency, needs to have ads metrics and pixel
+-  Use ad platform conversion tracking (Meta Pixel, Google Ads Conversion Tag)
+-  When a user clicks on an ad, the platform appends a click ID (e.g., gclid, fbclid)
+-   You capture that ID and persist it in the booking session
+-  On booking confirmation, fire the conversion event with the original click ID back to the ad platform
+-  This allows the ad platform to track CPA natively, attribute correctly, and optimize campaigns
+- 12 hrs for one ad paltform, and additional 5 hour for each ad platform",
+,,Customer Lifetime Value (CLV),4,Avg. value per renter,Avg. booking value × Avg. bookings per renter,Group by currency,
+,,Top Performing Channels,4,Bookings by source,GROUP BY source_channel,"Group by currency, need to have source channel info",
+,,,,,,,
+,Customer & Communication Performance (Data Store),,,,,,
+,,,,,,,
+,,first_conversation_initiated,4,,waiting message start time,,
+,,"first responded_at, response_time",4,,"- define what “first reply"", reply time
+- calculate the reply time and save to db",,
+,,conversation_start_time,2,,,,
+,,"conversation_reply_time, response time",2,,,,
+,,resolution time,4,,define what resolution is,,
+,,,,,,,
+,Customer & Communication Performance (Reporting),,,,,,
+,,Average Response Time (hrs),4,Avg. time between message and reply,AVG(reply_time - received_time),,
+,,First Response SLA Compliance (%),4,% of messages replied within 2 hours,(Replies ≤ 2h ÷ Total messages) × 100,,
+,,Average Resolution Time (hrs),4,Avg. time to close/resolved thread,AVG(last_message - first_message),,
+,,Unanswered Message Rate (%),4,% of messages unreplied after 24h,(Unanswered ÷ Total received) × 100,,
+,,Response Rate (%),4,% of messages replied to,(Replied ÷ Received) × 100,,
+,,Active Conversations,4,Active chats per day/week,COUNT(DISTINCT conversation_id WHERE active),,
+,,Support Ticket Resolution Time (hrs),4,Avg. time to resolve support issues,AVG(resolution_time),,
+,,Traveller Satisfaction (CSAT),,Avg. post-trip or post-message rating,AVG(cs_rating),Need to have CSAT BE and FE,
+,,Dispute Response Time (hrs),,Time to first admin response to dispute,AVG(response_time_dispute),Need to support dispute feature,
+,,,,,,,
+,Growth & Partner Metrics,,,,,,
+,,New Owners Onboarded,4,COUNT(owner_id WHERE created_at),New owner profiles,,
+,,New Campers Listed,4,COUNT(vehicle_id WHERE created_at),Newly added vehicles,,
+,,Active Owners (%),4,(Active owners ÷ Total owners) × 100,Owners with ≥1 booking,,
+,,Average Owner Earnings (€),4,Total payouts ÷ Active owners,Avg. payout per owner,,
+,,Track referral,0,"Visitor source
+- none / organic
+- search engine (google, etc)
+- social media (instagram, facebook, etc)
+- Assuming we are using Google Analytics and we can query the data from GA",,,
+,,Referral Rate (%),8,(Referred ÷ New users) × 100,% of new users via referral,"- Need to track source on registration
+- social media, not the actual referral system.
+- need to defined the referred users, the social media users.
+- can possibly reduce time",
+,,Seasonality Index,4,(Monthly bookings ÷ Yearly avg.),Monthly demand vs average,,
+,,,,,,,
+Admin Dashboard - All,,,,,,,
+,,,,,,,
+,Top Summary Bar (Quick View),,,,,,
+,,Occupancy Rate,2,"Data / selected timeframe, past N days. All fleet owner data combined into one number.",,,
+,,GBV,2,"Data / selected timeframe, past N days. All fleet owner data combined into one number.",,,
+,,ADR,2,"Data / selected timeframe, past N days. All fleet owner data combined into one number.",,,
+,,Conversion Rate,2,"Data / selected timeframe, past N days. All fleet owner data combined into one number.",,,
+,,Avg. Rating,2,"Data / selected timeframe, past N days. All fleet owner data combined into one number.",,,
+,,Avg. Response Time,2,"Data / selected timeframe, past N days. All fleet owner data combined into one number.",,,
+,,,,,,,
+,,Marketing Source Breakdown (pie chart),4,,- assuming we can track this data with GA and pull the data from GA,Revisit,
+,,,,,,,
+,Growth & Partner Metrics UI,,,,,,
+,,New Owners Onboarded,4,"- Bar chart or table, New owners count, group by number of days, for the past N sets of day groups
+- ie, last 7 days, 30 days, 12 months",,,
+,,New Campers Listed,4,"- Bar chart or table, New campers listed count, group by number of days, for the past N sets of day groups
+- ie, last 7 days, 30 days, 12 months",,,
+,,Active Owners (%),4,"- Bar chart or table, Active owners count, group by number of days, for the past N sets of day groups
+- ie, last 7 days, 30 days, 12 months",,,
+,,Average Owner Earnings (€),6,"- Bar chart or table, Averge owner earnings, group by number of days, for the past N sets of day groups
+- ie, last 7 days, 30 days, 12 months",,,
+,,Referral Rate (%),4,"- Bar chart or table, New owners count, group by number of days, for the past N sets of day groups
+- ie, last 7 days, 30 days, 12 months",,Need to check where to get the data,
+,,Seasonality Index,4,"- Bar chart or table, Monthly index number, group by month, for the past N months.",,,
+,,,,,,,
+,Financial & Marketing Performance,,,,,,
+,,Gross Booking Value (GBV),2,"- Bar chart or table, Group by number of days, for the past N sets of day groups.
+- ie, last 7 days, 30 days, 12 months",,,
+,,Commission Revenue (€),2,"- Bar chart or table, Group by number of days, for the past N sets of day groups.
+- ie, last 7 days, 30 days, 12 months",,,
+,,Owner Payout (€),2,"- Bar chart or table, Group by number of days, for the past N sets of day groups.
+- ie, last 7 days, 30 days, 12 months",,,
+,,Top Performing Channels,,"- Bar chart or table, Group by number of days, for the past N sets of day groups.
+- ie, last 7 days, 30 days, 12 months",,To check where to get the data,
+,,Conversion Rate (%),0,data on ads platform,,Revisit,
+,,Cost per Acquisition (CPA),0,data on ads platform,,Revisit,
+,,,,,,,
+,,,,,,,
+,Main Panels:,,,"Date range
+Camper model
+Owner / Region
+Channel (Direct, Goboony, etc.)
+",,,
+,,"Owner Performance Table (utilisation, payouts, ratings)",,,,,
+,,,0,Owner utilisation,,Same as occupancy rate?,
+,,,0,Owner payouts,,already covered in owner payout,
+,,,,Owner ratings,,to revisit,
+,,"Communication Panel (response time, SLA, CSAT)",,,,see below,
+,,"Customer Experience Panel (ratings, disputes, resolution)",,,,see below,
+,,,,,,,
+,,,,,,,
+Admin Dashboard - Group by Fleet Owner,,,,,,,
+,,,,,,,
+,Financial & Marketing Performance,,,,,,
+,,Fleet Utilisation Heatmap (bookings per camper/day),4,,"heatmap view, camper vs time (during selected timeframe, group by day/month) vs color depth",filtered by fleet owner,
+,,Revenue by Fleet Owner (bar chart),,,,Same as GBV?,
+,,Gross Booking Value (GBV),2,"- Group by owner, during.a selected period, ie, last N days, N months.
+- Data in table fomat",,,
+,,Commission Revenue (€),2,"- Group by owner, during.a selected period, ie, last N days, N months.
+- Data in table fomat",,,
+,,Owner Payout (€),2,"- Group by owner, during.a selected period, ie, last N days, N months.
+- Data in table fomat",,,
+,,Average Daily Rate (ADR),2,"- Group by owner, during.a selected period, ie, last N days, N months.
+- Data in table fomat",,,
+,,Customer Lifetime Value (CLV),2,"- Group by owner, during.a selected period, ie, last N days, N months.
+- Data in table fomat",,,
+,,,,,,,
+,Customer & Communication Performance (UI),,,,,,
+,,Average Response Time (hrs),4,"- Group by owner, during.a selected period, ie, last N days, N months.
+- Data in table fomat",,"- admin <-> travelers chat
+- admin <-> fleet owners chat
+- fleet owners <-> travelers chat",
+,,First Response SLA Compliance (%),4,"- Group by owner, during.a selected period, ie, last N days, N months.
+- Data in table fomat",,"- admin <-> travelers chat
+- admin <-> fleet owners chat
+- fleet owners <-> travelers chat",
+,,Average Resolution Time (hrs),4,"- Group by owner, during.a selected period, ie, last N days, N months.
+- Data in table fomat",,"- admin <-> travelers chat
+- admin <-> fleet owners chat
+- fleet owners <-> travelers chat",
+,,Unanswered Message Rate (%),4,"- Group by owner, during.a selected period, ie, last N days, N months.
+- Data in table fomat",,"- admin <-> travelers chat
+- admin <-> fleet owners chat
+- fleet owners <-> travelers chat",
+,,Response Rate (%),4,"- Group by owner, during.a selected period, ie, last N days, N months.
+- Data in table fomat",,"- admin <-> travelers chat
+- admin <-> fleet owners chat
+- fleet owners <-> travelers chat",
+,,Active Conversations,4,"- Group by owner, during.a selected period, ie, last N days, N months.
+- Data in table fomat",,"- admin <-> travelers chat
+- admin <-> fleet owners chat
+- fleet owners <-> travelers chat",
+,,Support Ticket Resolution Time (hrs),4,"- Group by owner, during.a selected period, ie, last N days, N months.
+- Data in table fomat",,"- admin <-> travelers chat
+- admin <-> fleet owners chat
+- fleet owners <-> travelers chat",
+,,Traveller Post Message Satisfaction (CSAT),2,"- Group by owner, during.a selected period, ie, last N days, N months.
+- Data in table fomat",,"- admin <-> travelers chat
+- admin <-> fleet owners chat
+- fleet owners <-> travelers chat",
+,,Traveller Post Trip Satisfaction (CSAT),2,"- Group by owner, during.a selected period, ie, last N days, N months.
+- Data in table fomat",,travelers <-> fleet owner,
+,,Dispute Response Time (hrs),2,"- Group by owner, during.a selected period, ie, last N days, N months.
+- Data in table fomat",,travelers <-> fleet owner,
+,,,,,,,
+,Fleet & Booking Performance,,,,,,
+,,Occupancy Rate (%),2,"- Group by owner, during.a selected period, ie, last N days, N months.
+- No aggregation, pulling live data, can be slow if data grows
+- Data in table fomat",,,
+,,Average Booking Length (days),2,"- Group by owner, during.a selected period, ie, last N days, N months.
+- No aggregation, pulling live data, can be slow if data grows
+- Data in table fomat",,Assuming we count the booking start date that's within the selected timeframe,
+,,Cancellation Rate (%),2,"- Group by owner, during.a selected period, ie, last N days, N months.
+- No aggregation, pulling live data, can be slow if data grows
+- Data in table fomat",,"Assuming we count the booking dated, not the start date,  during the selected period.",
+,,Lead Time (days),2,"- Group by owner, during.a selected period, ie, last N days, N months.
+- No aggregation, pulling live data, can be slow if data grows
+- Data in table fomat",,"Assuming we count the booking dated, not the start date,  during the selected period.",
+,,Repeat Booking Rate (%),2,"- Group by owner, during.a selected period, ie, last N days, N months.
+- No aggregation, pulling live data, can be slow if data grows
+- Data in table fomat",,"Assuming we count the booking dated, not the start date,  during the selected period.",
+,,,,,,,
+Admin Dashboard - Filter by Owner,,,,,,,
+,,,,,,,
+,,,,,,,
+,Fleet & Booking Performance,,,,,,
+,,Utilization per Camper,2,"- Filtered by selected owner. Group by camper, during a selected period
+- Non pagination
+- ie. last N days , N months",,"filter by fleet owner, shows the list of campers for the owner",
+,,Revenue per Camper (€),2,"- Filtered by selected owner. Group by camper, during a selected period
+- Non pagination
+- ie. last N days , N months",,"filter by fleet owner, shows the list of campers for the owner",
+,,,,,,,
+,,Revenue by Camper (bar chart),3,,"- camper x data / selected timeframe
+- non-aggregated, pull live data
+- can be slow when there are many owners
+- show top N campers, without pagination","- Not suitsble for a large fleet, unless we choose the top N campers
+- filter by fleet owner",
+,,,,,,,
+,,,,,,,
+,,,,,,,
+,,,,,,,
+Fleet Owner Dashboard API,,,,,,,
+,Fleet Summary,,,,,,
+,,Total Campers,4,Total owned campers,COUNT(vehicles WHERE owner_id = X),Accessible by admin,
+,,Total Nights Booked,4,Nights booked per camper,SUM(booked_nights),Accessible by admin,
+,,Occupancy Rate (%),0,% of available nights booked,(Booked ÷ Available) × 100,Same as the feature in admin section,
+,,Average Booking Duration,0,Avg. nights per booking,Total booked nights ÷ Total bookings,Same as the feature in admin section,
+,,Total Revenue (€),0,Gross & net earnings,"SUM(total_price), SUM(payouts)",Same as the feature in admin section,
+,,Upcoming Bookings,4,Future confirmed bookings,COUNT(bookings WHERE start_date > NOW()),Accessible by admin,
+,,Cancellation Rate (%),0,Cancelled vs confirmed bookings,(Cancelled ÷ Confirmed) × 100,Same as the feature in admin section,
+,,Lead Time (days),0,Avg. days between booking & pickup,AVG(pickup_date - booking_date),Same as the feature in admin section,
+,,,,,,,
+,Financial Summary,,,,,,
+,,Total Earnings (Month/YTD),4,Owner’s income,SUM(payouts),,
+,,Pending Payouts,4,Yet-to-be-paid balances,SUM(pending),,
+,,Deposits Held,4,Active deposits,SUM(deposits WHERE status=held),,
+,,Additional Charges,4,Fuel/cleaning/damage fees,SUM(extra_charges),,
+,,Average Daily Rate,0,Avg. daily income,Total revenue ÷ Booked nights,Same as the feature in admin section,
+,,,,,,,
+,Communication & Traveller Interaction,,,,,,
+,,Average Response Time (hrs),1,Time from traveller message to reply,AVG(reply_time - message_received),Similar to the feature in admin section,
+,,First Response Rate (%),1,% of replies sent within 2h,(Replies ≤ 2h ÷ Total first messages) × 100,Similar to the feature in admin section,
+,,Total Conversations,2,All chats with travellers,COUNT(DISTINCT conversation_id),,
+,,Unread Messages,1,Messages awaiting reply,COUNT(messages WHERE unread = true),Similar to the feature in admin section,
+,,Response Rate (%),1,% of received messages replied to,(Replies ÷ Received) × 100,Similar to the feature in admin section,
+,,Message-to-Booking Conversion (%),8,Chats that led to bookings,(Bookings_from_chat ÷ Total conversations) × 100,Track conversation ID in bookin?,
+,,Traveller Rating After Communication,0,Avg. rating post-chat,AVG(cs_rating),Similar to the feature in admin section,
+,,Support Escalations,,Issues escalated to admin,COUNT(escalations),Need to support dispute feature,
+,,,,,,,
+,Camper Insights,,,,,,
+,,Occupancy per Camper (%),4,% of days booked,(Booked days ÷ Available days) × 100,,
+,,Revenue per Camper (€),2,Earnings per camper,SUM(revenue) GROUP BY camper,Similar to GBV?,
+,,Average Rating,4,Avg. traveller rating,AVG(rating_score),,
+,,Days Until Next Booking,4,Countdown,MIN(start_date - NOW()),,
+,,Maintenance Alerts,4,Service or inspection reminders,IF(service_due_date ≤ 30d),,
+,,,,,,,
+Dashboard Layout (Fleet Owner),,,,,,,
+,Top Summary Cards:,,,,,,
+,,Total Campers,2,One number,,,
+,,Occupancy Rate,2,"Data / selected timeframe, past N days. All data combined into one number.",,,
+,,Total Revenue,2,"Data / selected timeframe, past N days. All data combined into one number.",,,
+,,Average Response Time,2,"Data / selected timeframe, past N days. All data combined into one number.",,,
+,,Average Rating,2,"Data / selected timeframe, past N days. All data combined into one number.",,,
+,,,,,,,
+,,,,,,,
+,,,,,,,
+,,"All metrics from ""Admin Dashboard - Group by Fleet Owner""",8,"- Can see the metrics for the current fleet owner, if applicable
+- Query all the metrics at once instead of loading each metrics one by one",,,
+,,"All metrics from ""Admin Dashboard - Filter by Owner""",8,"- Can see the metrics for the current fleet owner, if applicable",,,
+,,,,,,,
+,,,,,,,
+,,,,,,,
+,,,,,,,
+,,,,,,,
+,,,,,,,
+,,,,,,,
+,Main Panels:,,,"Filters: (if applicable)
+- Camper
+- Date range
+- Booking status
+",,,
+,,Revenue by Camper (bar chart),4,,,,
+,,Bookings Calendar,0,N/A,,Not analytics,
+,,"Communication Overview (response rate, unread messages, conversion)",8,,,,
+,,Traveller Feedback (recent reviews + CSAT),,,,,
+,,Maintenance Reminders,0,Not analytics,,,
+,,,,,,,
+,,,,,,,
+,,,,,,,
+,,,,,,,
+,,,360,,,Assuming all data are non-aggregrated.,
