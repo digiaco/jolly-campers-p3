@@ -2017,49 +2017,171 @@ For each competitor listing, we collect:
 
 **Recommended:** Start with manual research + admin input form for MVP.
 
+---
+
+### Scraping Strategy
+
+#### Search Parameters
+
+```
+Duration:    3 nights (short trips = more availability = more price data)
+Lead times:  14, 28, 42, 56 days (2-8 weeks ahead)
+Frequency:   Daily
+Per region:  4 searches/day (one per lead time)
+```
+
+**Why these parameters:**
+- **3 nights:** Shorter duration = more campers available = more price data points
+- **2-8 weeks:** Realistic booking window, avoids last-minute low availability
+- **4 samples:** Captures pricing patterns across different lead times
+
+#### Daily Scrape Schedule
+
+```
+Daily Scrape (e.g., Dec 9):
+
+For each region (Amsterdam, Rotterdam, etc.):
+├── Search 1: Dec 23-26 (14 days ahead, 3 nights)
+├── Search 2: Jan 6-9 (28 days ahead, 3 nights)
+├── Search 3: Jan 20-23 (42 days ahead, 3 nights)
+└── Search 4: Feb 3-6 (56 days ahead, 3 nights)
+
+Record: Available listings with prices
+Skip: Unavailable listings (no price shown)
+```
+
+#### Price Normalization
+
+Different platforms handle fees differently:
+
+```
+Platform A:               Platform B:
+├── €100/night            ├── €127/night (all-in)
+├── +€50 cleaning fee     └── No extra fees
+├── +€30 service fee
+└── Total: €380/3 nights  └── Total: €381/3 nights
+
+Both are ~€127/night effective price
+```
+
+**Normalization Formula:**
+```
+effective_price_per_night = (base_price × nights + cleaning_fee + service_fee) / nights
+```
+
+**Always use `effective_price_per_night` for comparisons and AI training.**
+
+#### Data Points to Capture
+
+```
+Per listing:
+├── listing_id, platform
+├── region, camper_type, sleeps
+├── base_price_per_night (shown price)
+├── cleaning_fee (if shown separately)
+├── service_fee (if shown separately)
+├── total_price (if shown)
+├── effective_price_per_night (calculated)
+├── scrape_date
+├── booking_start, booking_end
+└── lead_time_days
+```
+
+#### Aggregation Logic
+
+```python
+def daily_competitor_scrape(region):
+    LEAD_TIMES = [14, 28, 42, 56]  # days ahead
+    DURATION = 3  # nights
+    all_prices = []
+
+    for lead_time in LEAD_TIMES:
+        start = today + timedelta(days=lead_time)
+        end = start + timedelta(days=DURATION)
+
+        results = search_platform(region, start, end)
+
+        for listing in results:
+            if listing.price:
+                # Normalize price
+                effective = normalize_price(listing, DURATION)
+                all_prices.append(effective)
+
+    # Market summary
+    return {
+        'region': region,
+        'date': today,
+        'sample_count': len(all_prices),
+        'market_median': median(all_prices),
+        'market_avg': mean(all_prices),
+    }
+```
+
+---
+
 ### Database Schema
 
 ```sql
--- Competitor listings
+-- Competitor listings (master data)
 CREATE TABLE competitor_listings (
     id SERIAL PRIMARY KEY,
-    platform_id INT REFERENCES competitor_platforms(id),
+    platform VARCHAR(50) NOT NULL,       -- 'goboony', 'camptoo', etc.
     external_listing_id VARCHAR(100),
     listing_url VARCHAR(500),
-    city VARCHAR(100),
-    province VARCHAR(100),
+    region VARCHAR(100),
     camper_type VARCHAR(100),
     brand VARCHAR(100),
-    year INT,
-    beds INT,
+    sleeps INT,
     is_active BOOLEAN DEFAULT true,
-    UNIQUE (platform_id, external_listing_id)
+    first_seen_at TIMESTAMP DEFAULT NOW(),
+    last_seen_at TIMESTAMP,
+    UNIQUE (platform, external_listing_id)
 );
 
--- Price history (track changes over time)
-CREATE TABLE competitor_price_history (
+-- Price samples (raw scraped data)
+CREATE TABLE competitor_price_samples (
     id SERIAL PRIMARY KEY,
     listing_id INT REFERENCES competitor_listings(id),
-    daily_price DECIMAL(10, 2),
-    weekly_price DECIMAL(10, 2),
-    recorded_at TIMESTAMP DEFAULT NOW(),
-    INDEX idx_listing_date (listing_id, recorded_at)
+    scrape_date DATE NOT NULL,
+
+    -- Search parameters
+    booking_start DATE NOT NULL,
+    booking_end DATE NOT NULL,
+    duration_nights INT NOT NULL,
+    lead_time_days INT NOT NULL,
+
+    -- Raw price data (what platform shows)
+    base_price_per_night DECIMAL(10, 2),
+    cleaning_fee DECIMAL(10, 2),
+    service_fee DECIMAL(10, 2),
+    total_price DECIMAL(10, 2),
+
+    -- Normalized price (for comparison)
+    effective_price_per_night DECIMAL(10, 2) NOT NULL,
+
+    created_at TIMESTAMP DEFAULT NOW(),
+    INDEX idx_region_date (scrape_date, booking_start),
+    INDEX idx_lead_time (lead_time_days)
 );
 
 -- Aggregated market data (for AI training)
-CREATE TABLE market_price_summary (
+CREATE TABLE competitor_market_summary (
     id SERIAL PRIMARY KEY,
-    date DATE NOT NULL,
-    province VARCHAR(100),
+    scrape_date DATE NOT NULL,
+    region VARCHAR(100) NOT NULL,
     camper_type VARCHAR(100),
-    avg_price DECIMAL(10, 2),
+
+    -- Aggregated from available listings
+    sample_count INT,
     median_price DECIMAL(10, 2),
+    avg_price DECIMAL(10, 2),
     min_price DECIMAL(10, 2),
     max_price DECIMAL(10, 2),
-    sample_size INT,
     p25_price DECIMAL(10, 2),
     p75_price DECIMAL(10, 2),
-    UNIQUE (date, province, camper_type)
+
+    created_at TIMESTAMP DEFAULT NOW(),
+    UNIQUE (scrape_date, region, camper_type)
 );
 ```
 
