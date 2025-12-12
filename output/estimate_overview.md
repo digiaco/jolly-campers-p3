@@ -1,6 +1,6 @@
 # Jolly Campers V3 - Project Estimate Overview
 
-**Last Updated:** November 24, 2025
+**Last Updated:** December 12, 2025
 
 ---
 
@@ -19,39 +19,41 @@ This document provides a comprehensive cost estimate for the Jolly Campers V3 pr
 | Development - Notification | 246 | $45 | $11,070.00 |
 | Development - Digital Handover | 277 | $45 | $12,465.00 |
 | Development - Dynamic Pricing (Phase 1) | 54 | $45 | $2,430.00 |
-| Design (10%) | 242 | $40 | $9,680.00 |
-| QA (15%) | 364 | $40 | $14,560.00 |
-| Management (15%) | 364 | $40 | $14,560.00 |
-| Business Analyst (10%) | 242 | $50 | $12,100.00 |
+| Development - Headless CMS & FE Pages | 279 | $45 | $12,555.00 |
+| Design (10%) | 270 | $40 | $10,800.00 |
+| QA (15%) | 405 | $40 | $16,200.00 |
+| Management (15%) | 405 | $40 | $16,200.00 |
+| Business Analyst (10%) | 270 | $50 | $13,500.00 |
 
-**Sub Total:** $159,980.00
+**Sub Total:** $178,335.00
 
-**Risk Buffer (20%):** $31,996.00
+**Risk Buffer (20%):** $35,667.00
 
-**Grand Total:** $191,976.00
+**Grand Total:** $214,002.00
 
 ---
 
 ## Hours Breakdown
 
-### Development Hours: 2,424
+### Development Hours: 2,703
 
 - **Core Development:** 1,487 hours
 - **KPI Development:** 360 hours
 - **Notification Development:** 246 hours
 - **Digital Handover Development:** 277 hours
 - **Dynamic Pricing Development (Phase 1):** 54 hours (additional items only - rules/pricing already in Core)
+- **Headless CMS & Frontend Pages:** 279 hours
 
 ### Supporting Roles
 
-Based on total development hours (2,424):
+Based on total development hours (2,703):
 
-- **Design (10%):** 242 hours
-- **QA (15%):** 364 hours
-- **Project Management (15%):** 364 hours
-- **Business Analysis (10%):** 242 hours
+- **Design (10%):** 270 hours
+- **QA (15%):** 405 hours
+- **Project Management (15%):** 405 hours
+- **Business Analysis (10%):** 270 hours
 
-**Total Project Hours:** 3,636 hours
+**Total Project Hours:** 4,053 hours
 
 ---
 
@@ -59,13 +61,13 @@ Based on total development hours (2,424):
 
 | Role | Hours | Rate ($/hr) | Total |
 |------|-------|-------------|-------|
-| Developer | 2,424 | $45 | $109,080.00 |
-| Designer | 242 | $40 | $9,680.00 |
-| QA Engineer | 364 | $40 | $14,560.00 |
-| Project Manager | 364 | $40 | $14,560.00 |
-| Business Analyst | 242 | $50 | $12,100.00 |
+| Developer | 2,703 | $45 | $121,635.00 |
+| Designer | 270 | $40 | $10,800.00 |
+| QA Engineer | 405 | $40 | $16,200.00 |
+| Project Manager | 405 | $40 | $16,200.00 |
+| Business Analyst | 270 | $50 | $13,500.00 |
 
-**Subtotal:** $159,980.00
+**Subtotal:** $178,335.00
 
 ---
 
@@ -187,11 +189,51 @@ See detailed breakdown in estimate_dynamic_pricing.md
 
 <span style="color: red;">**Note:** Phase 1 focuses on Manual mode + competitor scraper infrastructure (time-sensitive data). Per-source scraper hours vary significantly (8-24h+) based on: URL parameter support, need for browser automation, price breakdown location, and anti-bot measures. Weather and events data collection (~40 hours) deferred to Phase 2 since historical data is available. AI/Auto mode (~118 hours total) starts after 6+ months of competitor data collection.</span>
 
-### 6. Design (256 hours)
+### 6. Headless CMS & Frontend Pages (279 hours)
+
+Content management system and Next.js frontend implementation for editorial/marketing pages:
+
+**Sanity CMS Setup & Schemas (93 hours)**
+- Sanity Studio setup, customization, deployment (12h)
+- Content schemas: Blog, Destinations, Routes, FAQ, Legal, About, Homepage, Offers (32h)
+- Next.js integration: client, GROQ queries, TypeScript types (15h)
+- Multi-language support: 5 languages with fallback (12h)
+- Preview & editorial features: draft mode, live preview, scheduled publishing (10h)
+- Image & media handling (6h)
+- Migration & initial content (6h)
+
+**Frontend CMS & Hybrid Pages (186 hours)**
+- Shared CMS components: rich text, layouts (10h)
+- Blog pages: hub, category, post detail (18h)
+- Destinations pages: hub, country, region (22h)
+- Seasonal inspiration pages (8h)
+- Routes/Itineraries pages: hub, detail with map (14h)
+- Help Center pages: home, travelers section, owners section (18h)
+- About pages: about, how it works, partners (12h)
+- Fleet Owner landing page: `/owners` with calculator, testimonials (12h)
+- Legal pages: terms, privacy, cookies, etc. (6h)
+- Offers & Promotions pages: hub, promotion detail (12h)
+- **Homepage (Booking.com-style): hero with search, offers, trending, top campers, trust, routes, blog preview, newsletter (42h)**
+- **Header & Footer: desktop/mobile header, multi-column footer (12h)**
+
+**Content Managed by Sanity CMS:**
+- Blog posts & categories
+- Destination guides (country/region/seasons)
+- Trip routes & itineraries
+- Help Center / FAQ
+- About, How it Works, Partners
+- Fleet Owner landing (`/owners`)
+- Legal pages (Terms, Privacy, Cookies, Insurance, Deposits)
+- Offers & Promotions
+- Homepage hero, offers, trust sections
+
+See detailed breakdown in estimate_landing_headless_cms.md
+
+### 7. Design (270 hours)
 
 UI/UX design for all application components at 10% of development effort
 
-### 7. Quality Assurance (384 hours)
+### 8. Quality Assurance (405 hours)
 
 Testing and quality assurance at 15% of development effort, including:
 - Functional testing
@@ -200,7 +242,7 @@ Testing and quality assurance at 15% of development effort, including:
 - Performance testing
 - Security testing
 
-### 8. Project Management (384 hours)
+### 9. Project Management (405 hours)
 
 Project coordination and management at 15% of development effort, including:
 - Sprint planning and coordination
@@ -209,7 +251,7 @@ Project coordination and management at 15% of development effort, including:
 - Risk management
 - Team coordination
 
-### 9. Business Analysis (256 hours)
+### 10. Business Analysis (270 hours)
 
 Requirements analysis and documentation at 10% of development effort, including:
 - Requirements gathering and clarification
@@ -276,6 +318,7 @@ The following are **NOT** included in this estimate:
    - estimate_notification_development.md
    - estimate_digital_handover_development.md
    - estimate_dynamic_pricing.md
+   - estimate_landing_headless_cms.md
 
 2. Clarify items marked with red flags in the detailed estimates
 
