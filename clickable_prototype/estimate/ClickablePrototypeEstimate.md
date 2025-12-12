@@ -28,7 +28,36 @@ This estimate covers the "Happy Path" (ideal user flow) for the Traveler and Fle
 
 ---
 
-## Project Roadmap And Timeline
+## Additional Scope (Client Additions)
+
+The following additions expand the original scope to create a more complete platform demonstration:
+
+| Feature Module | Scope of Work | Est. Hours | Cost (@ $45/hr) |
+|----------------|---------------|------------|-----------------|
+| **07. Full Traveler Website Flow** | Complete traveler-facing experience mirroring Goboony/Airbnb: Enhanced Homepage, Search → Filtering → Results flow, Vehicle detail page (photos, amenities, pricing, reviews, availability), Full booking flow with extras/add-ons, Confirmation page, Static "My Trips" overview page. | 35 h | **$1,575** |
+| **08. All-Platform Calendar Sync** | Add visual status indicators for additional platforms (Goboony, Paul Camper, Booking.com, Own website iCal) to existing sync page. Static icons/status only - detailed interaction already covered in base estimate. | 4 h | **$180** |
+| **09. iFrame Booking Integration** | Fleet owner embedding preview: Mock-up of booking iFrame on owner's website, Visual example of listing within iframe, Basic customization preview (logo, color theme). Core differentiator for direct bookings. | 14 h | **$630** |
+| **10. Multi-Unit Fleet Dashboard** | Professional fleet owner focus: Dashboard showing multiple campers overview, Revenue breakdown per unit, Quick status indicators (available / in service / rented), Fleet-level analytics view. | 16 h | **$720** |
+| **11. Direct Booking & Commission** | Direct booking value proposition: Simulation of direct booking via iFrame, Commission saved visualization, "Channel mix" view (direct vs platform bookings), ROI comparison display. | 10 h | **$450** |
+| **12. Brand Story Pages** | Platform completeness: Static About page, Static Support/Help page, Basic footer navigation. | 6 h | **$270** |
+| **13. Additional PM (Scope Expansion)** | Extra coordination for expanded scope: Additional review sessions, Scope alignment meetings. | 5 h | **$225** |
+| **TOTAL ADDITIONS** | | **90 Hours** | **$4,050** |
+
+---
+
+## Combined Estimate Summary
+
+| Category | Hours | Cost |
+|----------|-------|------|
+| Base Estimate | 155 h | $6,975 |
+| Additional Scope | 90 h | $4,050 |
+| **GRAND TOTAL** | **245 Hours** | **$11,025** |
+
+**Revised Timeline:** Approx. 8-9 Weeks (extended from 6 weeks)
+
+---
+
+## Project Roadmap And Timeline (Revised)
 
 ### Phase 1: Logic & Definition (Weeks 1-2)
 
@@ -39,25 +68,48 @@ This estimate covers the "Happy Path" (ideal user flow) for the Traveler and Fle
 - Defining the "Math" behind the Smart Pricing graphs (Visual only)
 - Scripting the AI Chat conversation
 - Wireframing the "Golden Path" user flows
+- iFrame integration concept definition
+- Channel mix and commission logic
 
 **Client Deliverable:** Approval of Wireframes and Logic Rules.
 
 ---
 
-### Phase 2: High-Fidelity Design (Weeks 3-4)
+### Phase 2: High-Fidelity Design - Traveler Side (Weeks 3-4)
 
-**Focus:** "The Look & Feel."
+**Focus:** "The Traveler Experience."
 
 **Key Activities:**
 - Design System finalization
-- UI Design of all Core and Dashboard screens in Figma
-- Creation of static assets for graphs and calendars
+- Full Traveler Homepage design
+- Search → Filtering → Results flow
+- Vehicle detail page (photos, amenities, pricing, reviews)
+- Booking flow with extras/add-ons
+- Confirmation and "My Trips" pages
+- AI Support widget integration
+- About and Support pages
 
-**Client Deliverable:** Review of static high-fidelity screens.
+**Client Deliverable:** Review of Traveler-facing screens.
 
 ---
 
-### Phase 3: Interactive Development (Weeks 5-6)
+### Phase 3: High-Fidelity Design - Fleet Owner Side (Weeks 5-6)
+
+**Focus:** "The Fleet Owner Tools."
+
+**Key Activities:**
+- Fleet Owner Dashboard with multi-unit overview
+- All-platform Calendar Sync Hub (visual for all platforms)
+- Smart Pricing Suite screens
+- iFrame Booking Integration preview
+- Direct Booking & Commission visualization
+- Messaging and Maintenance modules
+
+**Client Deliverable:** Review of Fleet Owner screens.
+
+---
+
+### Phase 4: Interactive Development (Weeks 7-9)
 
 **Focus:** "The Magic."
 
@@ -65,7 +117,10 @@ This estimate covers the "Happy Path" (ideal user flow) for the Traveler and Fle
 - Importing assets to Framer
 - Building the "Earnings Impact" slider animation
 - Scripting the AI "Typing" and message sequencing
-- Linking pages for the clickable demo
+- Calendar sync flow (interactive for one platform)
+- iFrame customization preview
+- Linking all pages for the clickable demo
+- Final polish and transitions
 
 **Client Deliverable:** Final Presentation & File Handover.
 
@@ -73,21 +128,23 @@ This estimate covers the "Happy Path" (ideal user flow) for the Traveler and Fle
 
 ## Engagement Protocols & Scope Boundaries
 
-To ensure the project remains efficient and budget-friendly, the following boundaries apply to the Base Estimate:
+To ensure the project remains efficient and budget-friendly, the following boundaries apply:
 
 1. **Happy Path Only:** The prototype will demonstrate the ideal success scenario (e.g., a successful booking). Error states (e.g., "Card Declined," "No Internet") are excluded unless critical to the flow.
 
 2. **Static Data:** All graphs, calendars, and analytics (e.g., "Regional occupancy trends") will use hard-coded, dummy data. No real-time calculation logic or backend databases will be developed.
 
-3. **Single-Instance Sync:** The "Cross-Platform Calendar Sync" will demonstrate the connection flow for one platform (e.g., Airbnb) as a representative example, not all connected platforms listed in the scope.
+3. **Multi-Platform Visual, Single Interactive:** *(Updated)* The Calendar Sync Hub will show ALL major platforms visually (Goboony, Paul Camper, Airbnb, Booking.com, Own website iCal), but only ONE platform will have full interactive flow. Others will be static representations.
 
 4. **AI Simulation:** The AI Support Center will use a pre-scripted linear conversation. It will not be a functional chatbot capable of answering random free-text questions.
 
 5. **Device Focus:** The primary design focus is Desktop.
 
-6. **Billable Meetings:** All scheduled workshops, reviews, and ad-hoc calls are billable hours.
+6. **iFrame Preview Only:** The iFrame booking integration will be a visual mock-up showing the concept. No actual embeddable code will be generated.
 
-7. **The "75% Alert":** We will provide a weekly burn report. When 75% of the estimated hours (approx. 115 hours) have been utilized, we will conduct a scope review to prioritize remaining tasks.
+7. **Billable Meetings:** All scheduled workshops, reviews, and ad-hoc calls are billable hours.
+
+8. **The "75% Alert":** We will provide a weekly burn report. When 75% of the estimated hours (approx. 184 hours) have been utilized, we will conduct a scope review to prioritize remaining tasks.
 
 ---
 
@@ -182,40 +239,86 @@ Instant guidance and issue resolution, reducing owner support tasks. Covers:
 
 ## Prototype Features Breakdown
 
-### 1) Traveler Homepage
+### Traveler Side
+
+#### 1) Traveler Homepage
 - Search-first design
 - Destination and vehicle discovery sections
 - Trust-focused messaging supported by AI trip assistance
 - Secondary CTA for fleet owners to request professional access
 
-### 2) Traveler Booking Flow
-- Search results with map and filters
-- Vehicle listing with:
+#### 2) Full Traveler Booking Flow *(Expanded)*
+- **Search Results:** Map and filters, sorting options
+- **Vehicle Detail Page:**
+  - Photo gallery with amenities
+  - Pricing breakdown
+  - Reviews and ratings
   - Availability calendar
-  - Total trip cost breakdown
   - Standardized quality ratings and policies
-- Booking confirmation and payment flow
+- **Booking Flow:**
+  - Extras/add-ons selection
+  - Total trip cost breakdown
+  - Payment simulation
+- **Confirmation Page:** Booking summary, next steps
 
-### 3) Traveler AI Support Center (New Required Screen)
+#### 3) My Trips Overview *(New)*
+- Static overview of upcoming and past trips
+- Basic trip cards with status indicators
+
+#### 4) Traveler AI Support Center
 - Live help widget preview inside booking page
 - Support topics: insurance, deposits, pick-up times, how equipment works
 - "Help while on your trip" mock-up screen with how-to videos and step-by-step troubleshooting
 
-### 4) Unified Messaging
-- Messaging window for travelers and fleet owners
-- Automated response suggestions for owners
-- Lead conversion insight sidebar
+### Fleet Owner Side
 
-### 5) Fleet Owner Dashboard
+#### 5) Fleet Owner Dashboard *(Enhanced)*
 
 | Module | Description |
 |--------|-------------|
-| Overview | Key metrics: occupancy, revenue, forecast, alerts |
-| Calendar Hub | Sync control, conflict notices, manual block, pricing sync |
-| Smart Pricing | Suggested pricing with forecast impact |
-| Fleet Manager | Vehicle-level analytics and maintenance alerts |
-| Messaging | Central inbox with automation |
-| Maintenance | Service tasks auto-generated |
+| **Overview** | Key metrics: occupancy, revenue, forecast, alerts |
+| **Multi-Unit Fleet View** *(New)* | Dashboard showing all campers, revenue per unit, status indicators (available / in service / rented) |
+| **Calendar Hub** | Sync control for ALL platforms (visual), conflict notices, manual block, pricing sync |
+| **Smart Pricing** | Suggested pricing with forecast impact, earnings preview |
+| **Fleet Manager** | Vehicle-level analytics and maintenance alerts |
+| **Messaging** | Central inbox with automation, automated templates |
+| **Maintenance** | Service tasks auto-generated, predictive notifications |
+
+#### 6) All-Platform Calendar Sync Hub *(Expanded)*
+Visual representation of connections with:
+- Goboony
+- Paul Camper
+- Airbnb
+- Booking.com
+- Own website iCal
+
+Features:
+- Sync onboarding flow (interactive for one platform)
+- Status indicators for all connected platforms
+- Conflict warning preview
+
+#### 7) iFrame Booking Integration *(New)*
+- Mock-up of booking widget embedded on owner's website
+- Visual example of how their listing appears in iframe
+- Basic customization preview (logo, color theme selection)
+
+#### 8) Direct Booking & Commission View *(New)*
+- Simulation of direct booking coming through iFrame
+- Commission saved visualization
+- "Channel mix" view comparing direct vs platform bookings
+- ROI comparison display
+
+#### 9) Unified Messaging
+- Messaging window for travelers and fleet owners
+- Automated response suggestions for owners
+- Lead conversion insight sidebar
+- Instant availability response
+
+### Brand Pages *(New)*
+
+#### 10) Static Brand Pages
+- **About Page:** Platform story, mission, team
+- **Support Page:** Help categories, contact information
 
 ---
 
